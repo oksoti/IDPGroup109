@@ -31,7 +31,7 @@ try:
     while True:
         error = line_sensor.line_error()
         turn = controller.update(error)
-        left, right = error_to_motor_speeds(turn, base=BASE_SPEED)
+        left, right = motors.speeds_from_turn(turn, base=BASE_SPEED)
         motors.drive(left, right)
         sleep_ms(10)
 except KeyboardInterrupt:
