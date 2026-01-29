@@ -27,7 +27,7 @@ print("Welcome to main.py!")
 # test_STU_22L_UART()
 # test_tiny_code_reader()
 
-from drivers.motor import error_to_motor_speeds
+from sw.src.drivers.motor import error_to_motor_speeds
 
 turn = controller.update(error)
 left, right = error_to_motor_speeds(turn, base=0.55)
