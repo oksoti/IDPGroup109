@@ -1,6 +1,6 @@
 from utime import sleep_ms
 from sw.src.drivers.line_sensor import LineSensorArray
-from sw.src.drivers.motor import Motor, MotorPair, error_to_motor_speeds
+from sw.src.drivers.motor import Motor, MotorPair
 from sw.src.controllers.line_controller import PDLineController
 from sw.src import config
 
