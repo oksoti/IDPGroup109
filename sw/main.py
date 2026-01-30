@@ -1,10 +1,7 @@
 from utime import sleep_ms
 from sw.src.drivers.line_sensor import LineSensorArray
 from sw.src.drivers.motor import Motor, MotorPair
-from sw.src.controllers.line_controller import PDLineController
 from sw.src import config
-
-
 
 # --- Motor pin configuration (UPDATE to match your wiring) ---
 LEFT_MOTOR_DIR_PIN = 6
@@ -12,28 +9,42 @@ LEFT_MOTOR_PWM_PIN = 7
 RIGHT_MOTOR_DIR_PIN = 8
 RIGHT_MOTOR_PWM_PIN = 9
 
-# --- PD controller tuning ---
-KP = 0.3
-KD = 0.05
-BASE_SPEED = 0.55
+# --- Speeds ---
+BASE_SPEED = 0.5
+REALIGN_SPEED = 0.3
 
-
+# --- Hardware init ---
 line_sensor = LineSensorArray(config.LINE_PINS, white_is_1=config.LINE_WHITE_IS_1)
 
 left_motor = Motor(LEFT_MOTOR_DIR_PIN, LEFT_MOTOR_PWM_PIN)
 right_motor = Motor(RIGHT_MOTOR_DIR_PIN, RIGHT_MOTOR_PWM_PIN)
 motors = MotorPair(left_motor, right_motor)
 
-controller = PDLineController(KP, KD)
-
 print("Running. Press Ctrl+C to stop.")
 
 try:
     while True:
-        error = line_sensor.line_error()
-        turn = controller.update(error)
-        left, right = motors.speeds_from_turn(turn, base=BASE_SPEED)
-        motors.drive(left, right)
+        ol, ml, mr, or_ = line_sensor.read_named()
+
+        if ml == 1 and mr == 1 and ol == 1:
+            # Left corner: outer-left + both middles see white
+            motors.turn_left(90)
+        elif ml == 1 and mr == 1 and or_ == 1:
+            # Right corner: outer-right + both middles see white
+            motors.turn_right(90)
+        elif ml == 1 and mr == 1:
+            # Aligned: both middles on the line
+            motors.drive(BASE_SPEED, BASE_SPEED)
+        elif ml == 1 and mr == 0:
+            # Drifted left of line: left-mid sees it but right-mid lost it -> turn right
+            motors.drive(BASE_SPEED, REALIGN_SPEED)
+        elif ml == 0 and mr == 1:
+            # Drifted right of line: right-mid sees it but left-mid lost it -> turn left
+            motors.drive(REALIGN_SPEED, BASE_SPEED)
+        else:
+            # Line lost (0,0,0,0 or unexpected state): stop
+            motors.stop()
+
         sleep_ms(10)
 except KeyboardInterrupt:
     motors.stop()
