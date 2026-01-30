@@ -15,7 +15,6 @@ KP = 0.3
 KD = 0.05
 BASE_SPEED = 0.55
 
-print("Initialising line follower...")
 
 line_sensor = LineSensorArray(config.LINE_PINS, white_is_1=config.LINE_WHITE_IS_1)
 
