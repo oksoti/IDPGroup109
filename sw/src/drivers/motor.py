@@ -1,4 +1,5 @@
 from machine import Pin, PWM
+from utime import sleep_ms
 
 
 class Motor:
@@ -52,6 +53,20 @@ class MotorPair:
     def drive(self, left_speed, right_speed):
         self.left.set_speed(left_speed)
         self.right.set_speed(right_speed)
+
+    def turn_left(self, angle, turn_speed=0.5, ms_per_deg=5):
+        duration = int(angle * ms_per_deg)
+        self.left.set_speed(-turn_speed)
+        self.right.set_speed(turn_speed)
+        sleep_ms(duration)
+        self.stop()
+
+    def turn_right(self, angle, turn_speed=0.5, ms_per_deg=5):
+        duration = int(angle * ms_per_deg)
+        self.left.set_speed(turn_speed)
+        self.right.set_speed(-turn_speed)
+        sleep_ms(duration)
+        self.stop()
 
     def stop(self):
         self.left.off()
