@@ -3,7 +3,7 @@ from utime import sleep_ms
 from config import LEFT_PWM_PIN, RIGHT_PWM_PIN
 from line_sensor import LineSensorArray
 from motor import Motor, MotorPair
-import config
+import src.config as config from src.controllers.bay_controller import BayController
 
 # --- Motor pin configuration (UPDATE to match your wiring) ---
 '''LEFT_MOTOR_DIR_PIN = 6
@@ -23,6 +23,10 @@ right_motor = Motor(config.RIGHT_DIR_PIN, RIGHT_PWM_PIN)
 motors = MotorPair(left_motor, right_motor)
 
 print("Running. Press Ctrl+C to stop.")
+
+bay_controller = BayController(drivetrain, box_detector, config)
+
+did_turn = bay_controller.attempt_turn_into_bay("left")
 
 try:
     while True:
