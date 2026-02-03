@@ -55,13 +55,13 @@ def skip_junction(ol_target, or_target, quantity=1):
         sleep_ms(200)  # drive forward past the junction
         motors.stop()
 
-def bring_to_bay1(self):
+def bring_to_bay1():
     line_follow_until(1,1)
     motors.turn_left(90)
     line_follow_until(1,1)
     motors.turn_right(90)
     line_follow_until(0,1)
-def bring_to_middle_bay(self, bay_number):
+def bring_to_middle_bay(bay_number):
     line_follow_until(1, 1)
     motors.turn_left(90)
     line_follow_until(1, 1)
@@ -81,7 +81,7 @@ def bring_to_middle_bay(self, bay_number):
         line_follow_until(1, 0)
         motors.turn_left(90)
 
-def bring_to_bay3(self):
+def bring_to_bay4():
     line_follow_until(1, 1)
     motors.turn_right(90)
     line_follow_until(1, 1)
@@ -91,8 +91,34 @@ def bring_to_bay3(self):
 def test_target():
     return random.choice([1,2,3,4])
 
-def grab_target():
-    return True
+def grab_target(number):
+    if number == 0:
+        motors.turn_left(90)
+        line_follow_until(1, 1)
+        sleep_ms(200)
+        motors.turn_left(180)
+    elif number == 1:
+        motors.turn_right(90)
+        line_follow_until(1, 1)
+        sleep_ms(200)
+        motors.turn_left(180)
+
+line_follow_until(1,1)
+motors.turn_left(90)
+line_follow_until(1,0)
+grab_target(0)
+bay = test_target()
+if bay == 1:
+    bring_to_bay1()
+elif bay == 4:
+    bring_to_bay4()
+elif bay == 2:
+    bring_to_middle_bay(2)
+elif bay == 3:
+    bring_to_middle_bay(3)
+
+
+
 
 
 

@@ -122,7 +122,7 @@ line_follow_until(0, 1)
 motors.turn_right(90)
 line_follow_until(1, 1)
 
-try:
+'''try:
     while True:
         ol, ml, mr, or_ = line_sensor.read_named()
 
@@ -157,3 +157,4 @@ try:
 except KeyboardInterrupt:
     motors.stop()
     print("Stopped.")
+'''
