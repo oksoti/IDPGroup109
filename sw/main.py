@@ -30,11 +30,15 @@ try:
 
         if ml == 1 and mr == 1 and ol == 1 and or_ == 0:
             # Left corner: outer-left + both middles see white
+            motors.drive(BASE_SPEED, BASE_SPEED)
+            sleep_ms(100)
             motors.turn_left(90)
             motors.drive(BASE_SPEED, BASE_SPEED)
             sleep_ms(200)  # drive forward past the junction
         elif ml == 1 and mr == 1 and or_ == 1 and ol == 0:
             # Right corner: outer-right + both middles see white
+            motors.drive(BASE_SPEED, BASE_SPEED)
+            sleep_ms(100)
             motors.turn_right(90)
             motors.drive(BASE_SPEED, BASE_SPEED)
             sleep_ms(200)  # drive forward past the junction
