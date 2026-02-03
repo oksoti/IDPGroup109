@@ -43,10 +43,10 @@ try:
             motors.drive(BASE_SPEED, BASE_SPEED)
         elif ml == 1 and mr == 0 and or_ == 0:
             # Drifted right of line: left-mid sees it but right-mid lost it -> turn right
-            motors.drive(BASE_SPEED, REALIGN_SPEED)
+            motors.drive(REALIGN_SPEED, BASE_SPEED)
         elif ml == 0 and mr == 1 and ol == 0:
             # Drifted left of line: right-mid sees it but left-mid lost it -> turn left
-            motors.drive(REALIGN_SPEED, BASE_SPEED)
+            motors.drive(BASE_SPEED, REALIGN_SPEED)
         else:
             # Line lost (0,0,0,0 or unexpected state): stop
             motors.stop()
