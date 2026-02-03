@@ -28,4 +28,3 @@ MAX_SPEED = 1.0
 
 # Loop timing
 LOOP_DELAY_MS = 10  # 10ms = 100 Hz loop
-
