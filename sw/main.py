@@ -28,19 +28,19 @@ try:
     while True:
         ol, ml, mr, or_ = line_sensor.read_named()
 
-        if ml == 1 and mr == 1 and ol == 1:
+        if ml == 1 and mr == 1 and ol == 1 and or_ == 1:
             # Left corner: outer-left + both middles see white
             motors.turn_left(90)
-        elif ml == 1 and mr == 1 and or_ == 1:
+        elif ml == 1 and mr == 1 and or_ == 1 and ol == 1:
             # Right corner: outer-right + both middles see white
             motors.turn_right(90)
-        elif ml == 1 and mr == 1:
+        elif ml == 1 and mr == 1 and or_ == 1 and ol == 1:
             # Aligned: both middles on the line
             motors.drive(BASE_SPEED, BASE_SPEED)
-        elif ml == 1 and mr == 0:
+        elif ml == 1 and mr == 0 and ol == 1 and or_ == 0:
             # Drifted left of line: left-mid sees it but right-mid lost it -> turn right
             motors.drive(BASE_SPEED, REALIGN_SPEED)
-        elif ml == 0 and mr == 1:
+        elif ml == 0 and mr == 1 and or_ == 1 and ol == 0:
             # Drifted right of line: right-mid sees it but left-mid lost it -> turn left
             motors.drive(REALIGN_SPEED, BASE_SPEED)
         else:
