@@ -41,10 +41,10 @@ try:
         elif ml == 1 and mr == 1 and or_ == 0 and ol == 0:
             # Aligned: both middles on the line
             motors.drive(BASE_SPEED, BASE_SPEED)
-        elif ml == 1 and mr == 0 and ol == 1 and or_ == 0:
+        elif ml == 1 and mr == 0 and or_ == 0:
             # Drifted right of line: left-mid sees it but right-mid lost it -> turn right
             motors.drive(BASE_SPEED, REALIGN_SPEED)
-        elif ml == 0 and mr == 1 and or_ == 1 and ol == 0:
+        elif ml == 0 and mr == 1 and ol == 0:
             # Drifted left of line: right-mid sees it but left-mid lost it -> turn left
             motors.drive(REALIGN_SPEED, BASE_SPEED)
         else:
