@@ -117,7 +117,7 @@ while True:
         break
     sleep_ms(10)
 
-line_follow_until(1, 1)
+'''line_follow_until(1, 1)
 motors.turn_right(90)
 skip_junction(0, 1)
 line_follow_until(1, 1)
@@ -138,12 +138,13 @@ motors.turn_right(90)
 line_follow_until(1, 1)
 motors.drive(BASE_SPEED, BASE_SPEED)
 sleep_ms(500)
-motors.stop()
+motors.stop()'''
 
 line_follow_until(0, 1)
 motors.turn_right(90)
 sleep_ms(1000)
 line_follow_until_rev(1,1)
+
 
 '''try:
     while True:
