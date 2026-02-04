@@ -12,8 +12,8 @@ RIGHT_MOTOR_DIR_PIN = 8
 RIGHT_MOTOR_PWM_PIN = 9'''
 
 # --- Speeds ---
-BASE_SPEED = 0.8
-REALIGN_SPEED = 0.3
+BASE_SPEED = 1.0
+REALIGN_SPEED = 0.6
 
 # --- Hardware init ---
 line_sensor = LineSensorArray(config.LINE_PINS, white_is_1=config.LINE_WHITE_IS_1)
@@ -89,18 +89,14 @@ def bring_to_bay3(self):
 
 
 
-# # leaving the start box
-# motors.drive(BASE_SPEED, BASE_SPEED)
-# sleep_ms(500)
-# motors.drive(REALIGN_SPEED, BASE_SPEED)  # turn right to find line
-# done = False
-# while not Done:
-#     ol, ml, mr, or_ = line_sensor.read_named()
-#     if or_ == 1:
-#         sleep_ms(200)
-#         motors.stop()
-#         done = True
-#     sleep_ms(10)
+# leaving the start box
+motors.drive(BASE_SPEED, BASE_SPEED)
+while True:
+    ol, ml, mr, or_ = line_sensor.read_named()
+    if ol == 1 and or_ == 1:
+        sleep_ms(200)
+        break
+    sleep_ms(10)
 
 line_follow_until(1, 1)
 motors.turn_right(90)
@@ -121,6 +117,9 @@ skip_junction(0, 1)
 line_follow_until(0, 1)
 motors.turn_right(90)
 line_follow_until(1, 1)
+motors.drive(BASE_SPEED, BASE_SPEED)
+sleep_ms(500)
+motors.stop()
 
 '''try:
     while True:
