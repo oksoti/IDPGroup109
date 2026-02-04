@@ -96,18 +96,19 @@ def grab_target(number):
         motors.turn_left(90)
         line_follow_until(1, 1)
         sleep_ms(200)
-        motors.turn_left(180)
+        motors.turn_around()
     elif number == 1:
         motors.turn_right(90)
         line_follow_until(1, 1)
         sleep_ms(200)
-        motors.turn_left(180)
+        motors.turn_around()
 
 line_follow_until(1,1)
 motors.turn_left(90)
 line_follow_until(1,0)
 grab_target(0)
-bay = test_target()
+bring_to_bay1()
+'''bay = test_target()
 if bay == 1:
     bring_to_bay1()
 elif bay == 4:
@@ -115,7 +116,7 @@ elif bay == 4:
 elif bay == 2:
     bring_to_middle_bay(2)
 elif bay == 3:
-    bring_to_middle_bay(3)
+    bring_to_middle_bay(3)'''
 
 
 
