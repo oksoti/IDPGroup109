@@ -6,7 +6,7 @@ class Navigator:
         self.motors = motors
         self.line_sensor = line_sensor
         self.rack_number = 0 # which rack the robot is at (0 = start box, a lower, a upper, b lower, b upper)
-        self.bay_number = 0  # which bay the robot is at (0 = none, 1-4)
+        self.bay_number = 0  # which bay the robot is at (0 = start box, 1-4)
 
     def line_follow_until(self, ol_target, or_target, reverse=False):
         direction = -1 if reverse else 1
@@ -32,7 +32,7 @@ class Navigator:
         for _ in range(quantity):
             self.line_follow_until(ol_target, or_target)
             self.motors.drive(BASE_SPEED, BASE_SPEED)
-            sleep_ms(200)  # drive forward past the junction
+            sleep_ms(int(200.0 / BASE_SPEED))  # drive forward past the junction
             self.motors.stop()
 
     def leave_start_box(self):
@@ -40,9 +40,14 @@ class Navigator:
         while True:
             ol, ml, mr, or_ = self.line_sensor.read_named()
             if ol == 1 and or_ == 1:
-                sleep_ms(200)
+                sleep_ms(int(200.0 / BASE_SPEED))
                 break
             sleep_ms(10)
+
+    def enter_start_box(self):
+        self.motors.drive(BASE_SPEED, BASE_SPEED)
+        sleep_ms(int(600.0 / BASE_SPEED))
+        self.motors.stop()
 
     def go_to_pickup_bay(self, bay_number):
         if self.rack_number == 0:
@@ -61,7 +66,7 @@ class Navigator:
                 self.motors.turn_right(90)
         elif self.rack_number == 4:
             self.line_follow_until(1, 0)
-            if bay_number > 1:
+            if bay_number != 1:
                 self.motors.turn_left(90)
                 if bay_number == 2:
                     self.line_follow_until(0, 1)
@@ -70,10 +75,13 @@ class Navigator:
                     self.line_follow_until(0, 1)
                 elif bay_number == 4:
                     self.line_follow_until(1, 1)
+                elif bay_number == 0:
+                    self.skip_junction(0, 1)
+                    self.line_follow_until(0, 1)
                 self.motors.turn_right(90)
         else:
             self.line_follow_until(0, 1)
-            if bay_number < 4:
+            if bay_number != 4:
                 self.motors.turn_right(90)
                 if bay_number == 3:
                     self.line_follow_until(1, 0)
@@ -82,12 +90,15 @@ class Navigator:
                     self.line_follow_until(1, 0)
                 elif bay_number == 1:
                     self.line_follow_until(1, 1)
+                elif bay_number == 0:
+                    self.skip_junction(1, 0)
+                    self.line_follow_until(1, 0)
                 self.motors.turn_left(90)        
         self.line_follow_until(1, 1)
         self.bay_number = bay_number
 
     def go_to_rack(self, rack_number):
-        self.motors.turn_around()
+        self.motors.turn_around(self.bay_number > 2)
         if self.bay_number == 2 or self.bay_number == 3:
             self.line_follow_until(1, 1)
         elif self.bay_number == 1:
@@ -126,7 +137,7 @@ class Navigator:
     def return_to_start_line(self):
         self.line_follow_until(1, 1)
         if self.rack_number == 2 or self.rack_number == 3:
-            self.motors.turn_around()
+            self.motors.turn_around(self.rack_number == 3)
             if self.rack_number == 2:
                 self.line_follow_until(1, 0)
                 self.motors.turn_left(90)

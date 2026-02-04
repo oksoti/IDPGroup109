@@ -44,10 +44,11 @@ class MotorPair:
         sleep_ms(duration)
         self.stop()
 
-    def turn_around(self):
+    def turn_around(self, clockwise = True):
+        direction = 1 if clockwise else -1
         duration = int(180 * 7)
-        self.left.set_speed(1.0)
-        self.right.set_speed(-1.0)
+        self.left.set_speed(1.0 * direction)
+        self.right.set_speed(-1.0 * direction)
         sleep_ms(duration)
         self.stop()
 
