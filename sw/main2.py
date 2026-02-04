@@ -103,6 +103,15 @@ def grab_target(number):
         sleep_ms(200)
         motors.turn_around()
 
+# leaving the start box
+motors.drive(BASE_SPEED, BASE_SPEED)
+while True:
+    ol, ml, mr, or_ = line_sensor.read_named()
+    if ol == 1 and or_ == 1:
+        sleep_ms(200)
+        break
+    sleep_ms(10)
+
 line_follow_until(1,1)
 motors.turn_left(90)
 line_follow_until(1,0)
