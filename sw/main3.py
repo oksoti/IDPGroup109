@@ -5,6 +5,8 @@ from src.drivers.motor import Motor, MotorPair
 import src.config as config
 from src.controllers.bay_controller import BayController
 import random
+from src.drivers.box_detector import SideBoxDetector
+import src.config as config
 
 # --- Motor pin configuration (UPDATE to match your wiring) ---
 '''LEFT_MOTOR_DIR_PIN = 6
@@ -24,6 +26,23 @@ right_motor = Motor(config.RIGHT_DIR_PIN, config.RIGHT_PWM_PIN)
 motors = MotorPair(left_motor, right_motor)
 
 print("Running. Press Ctrl+C to stop.")
+
+# left_tof = VL53L0X(...)          # your VL53 init
+# right_tof = DFRobot_TMF8701(...) # your TMF init
+
+left_detector = SideBoxDetector(
+    left_tof,
+    threshold_mm=config.BAY_OCCUPIED_THRESHOLD_MM,
+    samples=config.BOX_SAMPLES,
+    sample_delay_ms=config.BOX_SAMPLE_DELAY_MS
+)
+
+right_detector = SideBoxDetector(
+    right_tof,
+    threshold_mm=config.BAY_OCCUPIED_THRESHOLD_MM,
+    samples=config.BOX_SAMPLES,
+    sample_delay_ms=config.BOX_SAMPLE_DELAY_MS
+)
 
 # bay_controller = BayController(drivetrain, box_detector, config)
 

@@ -30,9 +30,9 @@ MAX_SPEED = 1.0
 LOOP_DELAY_MS = 10  # 10ms = 100 Hz loop
 
 # Box detection
-BOX_DETECT_MM = 200
-BOX_DETECT_SAMPLES = 7
-BOX_CONFIRM_MS = 60
+BAY_OCCUPIED_THRESHOLD_MM = 180
+BOX_SAMPLES = 7
+BOX_SAMPLE_DELAY_MS = 10
 
 BAY_TURN_DEG = 90          # or whatever you need to enter a bay
 BAY_TURN_SPEED = 0.5
