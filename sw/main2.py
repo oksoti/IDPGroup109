@@ -13,8 +13,8 @@ RIGHT_MOTOR_DIR_PIN = 8
 RIGHT_MOTOR_PWM_PIN = 9'''
 
 # --- Speeds ---
-BASE_SPEED = 0.8
-REALIGN_SPEED = 0.3
+BASE_SPEED = 1.0
+REALIGN_SPEED = 0.6
 
 # --- Hardware init ---
 line_sensor = LineSensorArray(config.LINE_PINS, white_is_1=config.LINE_WHITE_IS_1)
