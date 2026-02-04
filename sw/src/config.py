@@ -22,9 +22,8 @@ KP = 0.30
 KD = 0.05
 TURN_LIMIT = 1.0    # max magnitude of turn command
 
-# Speed clamp (start with no reverse while tuning)
-MIN_SPEED = 0.0     # 0..1 (set <0 only if you want reverse allowed)
-MAX_SPEED = 1.0
+BASE_SPEED = 1.0
+REALIGN_SPEED = 0.6
 
 # Loop timing
 LOOP_DELAY_MS = 10  # 10ms = 100 Hz loop

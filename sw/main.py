@@ -3,7 +3,7 @@ from utime import sleep_ms
 from src.drivers.line_sensor import LineSensorArray
 from src.drivers.motor import Motor, MotorPair
 import src.config as config
-from src.controllers.bay_controller import BayController
+from src.controllers.navigator import Navigator
 
 # --- Motor pin configuration (UPDATE to match your wiring) ---
 '''LEFT_MOTOR_DIR_PIN = 6
@@ -28,94 +28,22 @@ print("Running. Press Ctrl+C to stop.")
 
 # did_turn = bay_controller.attempt_turn_into_bay("left")
 
-def line_follow_until(ol_target, or_target):
-    while True:
-        ol, ml, mr, or_ = line_sensor.read_named()
+navigator = Navigator(motors, line_sensor)
 
-        if ol == ol_target and or_ == or_target:
-            motors.stop()
-            break
+navigator.leave_start_box()
+for i in range(1, 5):
+    navigator.go_to_pickup_bay(i)
+    navigator.go_to_rack(i)
+    navigator.return_to_start_line()
 
-        if ml == 1 and mr == 1:
-            motors.drive(BASE_SPEED, BASE_SPEED)
-        elif ml == 1 and mr == 0:
-            motors.drive(REALIGN_SPEED, BASE_SPEED)
-        elif ml == 0 and mr == 1:
-            motors.drive(BASE_SPEED, REALIGN_SPEED)
-        else:
-            motors.stop()
-
-        sleep_ms(10)
-
-def line_follow_until_rev(ol_target, or_target):
-    while True:
-        ol, ml, mr, or_ = line_sensor.read_named()
-
-        if ol == ol_target and or_ == or_target:
-            motors.stop()
-            break
-
-        if ml == 1 and mr == 1:
-            motors.drive(-BASE_SPEED, -BASE_SPEED)
-        elif ml == 1 and mr == 0:
-            motors.drive(-REALIGN_SPEED, -BASE_SPEED)
-        elif ml == 0 and mr == 1:
-            motors.drive(-BASE_SPEED, -REALIGN_SPEED)
-        else:
-            motors.stop()
-
-        sleep_ms(10)
-
-def skip_junction(ol_target, or_target, quantity=1):
-    for _ in range(quantity):
-        line_follow_until(ol_target, or_target)
-        motors.drive(BASE_SPEED, BASE_SPEED)
-        sleep_ms(200)  # drive forward past the junction
-        motors.stop()
-
-def bring_to_bay1(self):
-    line_follow_until(1,1)
-    motors.turn_left(90)
-    line_follow_until(1,1)
-    motors.turn_right(90)
-    line_follow_until(0,1)
-def bring_to_middle_bay(self, bay_number):
-    line_follow_until(1, 1)
-    motors.turn_left(90)
-    line_follow_until(1, 1)
-    motors.turn_right(90)
-    line_follow_until(1, 1)
-    line_follow_until(0, 1)
-    motors.turn_right(90)
-    line_follow_until(0,1)
-    motors.turn_right(90)
-    line_follow_until(1,1)
-    if bay_number == 2:
-        motors.turn_right(90)
-        line_follow_until(0,1)
-        motors.turn_right(90)
-    elif bay_number == 3:
-        motors.turn_left(90)
-        line_follow_until(1, 0)
-        motors.turn_left(90)
-
-def bring_to_bay3(self):
-    line_follow_until(1, 1)
-    motors.turn_right(90)
-    line_follow_until(1, 1)
-    motors.turn_left(90)
-    line_follow_until(1, 0)
-
-
-
-# leaving the start box
-motors.drive(BASE_SPEED, BASE_SPEED)
-while True:
-    ol, ml, mr, or_ = line_sensor.read_named()
-    if ol == 1 and or_ == 1:
-        sleep_ms(200)
-        break
-    sleep_ms(10)
+# # leaving the start box
+# motors.drive(BASE_SPEED, BASE_SPEED)
+# while True:
+#     ol, ml, mr, or_ = line_sensor.read_named()
+#     if ol == 1 and or_ == 1:
+#         sleep_ms(200)
+#         break
+#     sleep_ms(10)
 
 '''line_follow_until(1, 1)
 motors.turn_right(90)
@@ -135,50 +63,12 @@ motors.turn_left(90)
 skip_junction(0, 1)
 line_follow_until(0, 1)
 motors.turn_right(90)
-line_follow_until(1, 1)
 motors.drive(BASE_SPEED, BASE_SPEED)
-sleep_ms(500)
+sleep_ms(600)
 motors.stop()'''
 
 line_follow_until(0, 1)
 motors.turn_right(90)
+motors.drive(BASE_SPEED, BASE_SPEED)
 sleep_ms(1000)
 line_follow_until_rev(1,1)
-
-
-'''try:
-    while True:
-        ol, ml, mr, or_ = line_sensor.read_named()
-
-        if ml == 1 and mr == 1 and ol == 1 and or_ == 0:
-            # Left corner: outer-left + both middles see white
-            motors.drive(BASE_SPEED, BASE_SPEED)
-            sleep_ms(100)
-            motors.turn_left(90)
-            motors.drive(BASE_SPEED, BASE_SPEED)
-            sleep_ms(200)  # drive forward past the junction
-        elif ml == 1 and mr == 1 and or_ == 1 and ol == 0:
-            # Right corner: outer-right + both middles see white
-            motors.drive(BASE_SPEED, BASE_SPEED)
-            sleep_ms(100)
-            motors.turn_right(90)
-            motors.drive(BASE_SPEED, BASE_SPEED)
-            sleep_ms(200)  # drive forward past the junction
-        elif ml == 1 and mr == 1 and or_ == 0 and ol == 0:
-            # Aligned: both middles on the line
-            motors.drive(BASE_SPEED, BASE_SPEED)
-        elif ml == 1 and mr == 0 and or_ == 0:
-            # Drifted right of line: left-mid sees it but right-mid lost it -> turn right
-            motors.drive(REALIGN_SPEED, BASE_SPEED)
-        elif ml == 0 and mr == 1 and ol == 0:
-            # Drifted left of line: right-mid sees it but left-mid lost it -> turn left
-            motors.drive(BASE_SPEED, REALIGN_SPEED)
-        else:
-            # Line lost (0,0,0,0 or unexpected state): stop
-            motors.stop()
-
-        sleep_ms(10)
-except KeyboardInterrupt:
-    motors.stop()
-    print("Stopped.")
-'''

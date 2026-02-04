@@ -30,24 +30,24 @@ class MotorPair:
         self.left.set_speed(left_speed)
         self.right.set_speed(right_speed)
 
-    def turn_left(self, angle, turn_speed=1.0, ms_per_deg=10):
-        duration = int(angle * ms_per_deg)
-        self.left.set_speed(-0.3 * turn_speed)
-        self.right.set_speed(turn_speed)
+    def turn_left(self, angle):
+        duration = int(angle * 10)
+        self.left.set_speed(-0.3)
+        self.right.set_speed(1.0)
         sleep_ms(duration)
         self.stop()
 
-    def turn_right(self, angle, turn_speed=1.0, ms_per_deg=10):
-        duration = int(angle * ms_per_deg)
-        self.left.set_speed(turn_speed)
-        self.right.set_speed(-0.3 * turn_speed)
+    def turn_right(self, angle):
+        duration = int(angle * 10)
+        self.left.set_speed(1.0)
+        self.right.set_speed(-0.3)
         sleep_ms(duration)
         self.stop()
 
-    def turn_around(self, turn_speed=1.0, ms_per_deg=6):
-        duration = int(180 * ms_per_deg)
-        self.left.set_speed(turn_speed)
-        self.right.set_speed(-turn_speed)
+    def turn_around(self):
+        duration = int(180 * 7)
+        self.left.set_speed(1.0)
+        self.right.set_speed(-1.0)
         sleep_ms(duration)
         self.stop()
 
