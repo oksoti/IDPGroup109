@@ -47,6 +47,25 @@ def line_follow_until(ol_target, or_target):
 
         sleep_ms(10)
 
+def line_follow_until_rev(ol_target, or_target):
+    while True:
+        ol, ml, mr, or_ = line_sensor.read_named()
+
+        if ol == ol_target and or_ == or_target:
+            motors.stop()
+            break
+
+        if ml == 1 and mr == 1:
+            motors.drive(-BASE_SPEED, -BASE_SPEED)
+        elif ml == 1 and mr == 0:
+            motors.drive(-REALIGN_SPEED, -BASE_SPEED)
+        elif ml == 0 and mr == 1:
+            motors.drive(-BASE_SPEED, -REALIGN_SPEED)
+        else:
+            motors.stop()
+
+        sleep_ms(10)
+
 def skip_junction(ol_target, or_target, quantity=1):
     for _ in range(quantity):
         line_follow_until(ol_target, or_target)
@@ -120,6 +139,11 @@ line_follow_until(1, 1)
 motors.drive(BASE_SPEED, BASE_SPEED)
 sleep_ms(500)
 motors.stop()
+
+line_follow_until(0, 1)
+motors.turn_right(90)
+sleep_ms(1000)
+line_follow_until_rev(1,1)
 
 '''try:
     while True:
