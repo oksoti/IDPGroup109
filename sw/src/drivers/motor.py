@@ -44,7 +44,7 @@ class MotorPair:
         sleep_ms(duration)
         self.stop()
 
-    def turn_around(self, turn_speed=0.5, ms_per_deg=5):
+    def turn_around(self, turn_speed=1.0, ms_per_deg=6):
         duration = int(180 * ms_per_deg)
         self.left.set_speed(turn_speed)
         self.right.set_speed(-turn_speed)
