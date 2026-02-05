@@ -7,7 +7,7 @@ r4 = 100000
 adc = ADC(Pin(26))
 def measure_resistance():
     adc_value = adc.read_u16()
-#assuming 3.3 V is max adc output of 65535
+    #assuming 3.3 V is max adc output of 65535
     if adc_value > 500 and adc_value < 2000:
         #true value is 1365
         resistance = r1
