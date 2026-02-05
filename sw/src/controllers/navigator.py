@@ -8,6 +8,25 @@ class Navigator:
         self.rack_number = 0 # which rack the robot is at (0 = start box, a lower, a upper, b lower, b upper)
         self.bay_number = 0  # which bay the robot is at (0 = start box, 1-4)
 
+    def turn_left(self, reverse=False):
+        direction = -1 if reverse else 1
+        self.motors.drive(-0.3 * BASE_SPEED * direction, 1.0 * BASE_SPEED * direction)
+        sleep_ms(int(900.0 / BASE_SPEED))
+        self.stop()
+
+    def turn_right(self, reverse=False):
+        direction = -1 if reverse else 1
+        self.motors.drive(1.0 * BASE_SPEED * direction, -0.3 * BASE_SPEED * direction)
+        sleep_ms(int(900.0 / BASE_SPEED))
+        self.stop()
+
+    def turn_around(self, clockwise=True):
+        direction = 1 if clockwise else -1
+        duration = int(180 * 7)
+        self.motors.drive(1.0 * BASE_SPEED * direction, -1.0 * BASE_SPEED * direction)
+        sleep_ms(int(1260.0 / BASE_SPEED))
+        self.stop()
+
     def line_follow_until(self, ol_target, or_target, reverse=False):
         direction = -1 if reverse else 1
         while True:
@@ -53,21 +72,21 @@ class Navigator:
         if self.rack_number == 0:
             self.line_follow_until(1, 1)
             if bay_number < 3:
-                self.motors.turn_left(90)
+                self.turn_left()
                 self.line_follow_until(1, 0)
                 if bay_number == 1:
                     self.line_follow_until(1, 1)
-                self.motors.turn_left(90)
+                self.turn_left()
             else:
-                self.motors.turn_right(90)
+                self.turn_right()
                 self.line_follow_until(0, 1)
                 if bay_number == 4:
                     self.line_follow_until(1, 1)
-                self.motors.turn_right(90)
+                self.turn_right()
         elif self.rack_number == 4:
             self.line_follow_until(1, 0)
             if bay_number != 1:
-                self.motors.turn_left(90)
+                self.turn_left()
                 if bay_number == 2:
                     self.line_follow_until(0, 1)
                 elif bay_number == 3:
@@ -78,11 +97,11 @@ class Navigator:
                 elif bay_number == 0:
                     self.skip_junction(0, 1)
                     self.line_follow_until(0, 1)
-                self.motors.turn_right(90)
+                self.turn_right()
         else:
             self.line_follow_until(0, 1)
             if bay_number != 4:
-                self.motors.turn_right(90)
+                self.turn_right()
                 if bay_number == 3:
                     self.line_follow_until(1, 0)
                 elif bay_number == 2:
@@ -93,7 +112,7 @@ class Navigator:
                 elif bay_number == 0:
                     self.skip_junction(1, 0)
                     self.line_follow_until(1, 0)
-                self.motors.turn_left(90)        
+                self.turn_left()        
         self.line_follow_until(1, 1)
         self.bay_number = bay_number
 
@@ -108,29 +127,29 @@ class Navigator:
         
         if rack_number == 4:
             if self.bay_number < 4:
-                self.motors.turn_right(90)
+                self.turn_right()
                 self.line_follow_until(1, 1)
-                self.motors.turn_left(90)
+                self.turn_left()
         else:
             if self.bay_number > 1:
-                self.motors.turn_left(90)
+                self.turn_left()
                 self.line_follow_until(1, 1)
-                self.motors.turn_right(90)
+                self.turn_right()
             if rack_number > 1:
                 self.line_follow_until(1, 1)
                 self.line_follow_until(0, 1)
-                self.motors.turn_right(90)
+                self.turn_right()
                 self.line_follow_until(0, 1)
-                self.motors.turn_right(90)
+                self.turn_right()
                 self.line_follow_until(1, 1)
                 if rack_number == 2:
-                    self.motors.turn_right(90)
+                    self.turn_right()
                     self.line_follow_until(0, 1)
-                    self.motors.turn_right(90)
+                    self.turn_right()
                 else:
-                    self.motors.turn_left(90)
+                    self.turn_left()
                     self.line_follow_until(1, 0)
-                    self.motors.turn_left(90)
+                    self.turn_left()
 
         self.rack_number = rack_number
 
@@ -140,33 +159,33 @@ class Navigator:
             self.motors.turn_around(self.rack_number == 3)
             if self.rack_number == 2:
                 self.line_follow_until(1, 0)
-                self.motors.turn_left(90)
+                self.turn_left()
                 self.line_follow_until(1, 0)
-                self.motors.turn_left(90)
+                self.turn_left()
             else:
                 self.line_follow_until(0, 1)
-                self.motors.turn_right(90)
+                self.turn_right()
                 self.line_follow_until(0, 1)
-                self.motors.turn_right(90)
+                self.turn_right()
             self.line_follow_until(1, 1)
-            self.motors.turn_right(90)
+            self.turn_right()
 
         if self.rack_number == 1:
             self.line_follow_until(0, 1)
-            self.motors.turn_right(90)
+            self.turn_right()
             self.skip_junction(0, 1)
 
         if self.rack_number == 4:
             self.line_follow_until(1, 0)
-            self.motors.turn_left(90)
+            self.turn_left()
             self.skip_junction(1, 0)
             self.line_follow_until(1, 0)
-            self.motors.turn_left(90)
+            self.turn_left()
             self.skip_junction(1, 1)
             self.skip_junction(1, 0, 6)
         else:
             self.line_follow_until(0, 1)
-            self.motors.turn_right(90)
+            self.turn_right()
             self.skip_junction(1, 1)
             self.skip_junction(0, 1, 6)
 

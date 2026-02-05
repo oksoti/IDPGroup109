@@ -16,6 +16,12 @@ RIGHT_PWM_PIN = 6
 LEFT_INVERT_DIR = False
 RIGHT_INVERT_DIR = False
 
+START_BUTTON_PIN = 22
+LED_1_PIN = 12
+LED_2_PIN = 14
+LED_3_PIN = 16
+LED_4_PIN = 17
+
 # --- Control tuning ---
 BASE_SPEED = 0.55   # 0..1
 KP = 0.30

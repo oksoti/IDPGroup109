@@ -2,6 +2,8 @@ from utime import sleep_ms
 
 from src.drivers.line_sensor import LineSensorArray
 from src.drivers.motor import Motor, MotorPair
+from src.drivers.button import Button
+from src.drivers.led import LED
 import src.config as config
 from src.controllers.navigator import Navigator
 
@@ -30,42 +32,59 @@ print("Running. Press Ctrl+C to stop.")
 
 navigator = Navigator(motors, line_sensor)
 
+button = Button(config.START_BUTTON_PIN)
+led_1 = LED(config.LED_1_PIN)
+led_2 = LED(config.LED_2_PIN)
+led_3 = LED(config.LED_3_PIN)
+led_4 = LED(config.LED_4_PIN)
+
+
+while not button.pressed():
+    sleep_ms(100)
+
+led_1.on()
+led_2.on()
+led_3.on()
+led_4.on()
+sleep_ms(1000)
+led_1.off()
+led_2.off()
+led_3.off()
+led_4.off()
+
 navigator.leave_start_box()
-# for i in range(1, 5):
-#     navigator.go_to_pickup_bay(i)
-#     navigator.go_to_rack(i)
-#     navigator.return_to_start_line()
-
-# # leaving the start box
-# motors.drive(BASE_SPEED, BASE_SPEED)
-# while True:
-#     ol, ml, mr, or_ = line_sensor.read_named()
-#     if ol == 1 and or_ == 1:
-#         sleep_ms(200)
-#         break
-#     sleep_ms(10)
-
-navigator.line_follow_until(1, 1)
-motors.turn_right(90)
-navigator.skip_junction(0, 1)
-navigator.line_follow_until(1, 1)
-motors.turn_left(90)
-navigator.skip_junction(1, 1)
-navigator.line_follow_until(1, 0)
-motors.turn_left(90)
-navigator.skip_junction(1, 0)
-navigator.line_follow_until(1, 0)
-motors.turn_left(90)
-navigator.skip_junction(1, 1)
-navigator.skip_junction(1, 0, 6)
-navigator.line_follow_until(1, 0)
-motors.turn_left(90)
-navigator.skip_junction(0, 1)
+navigator.go_to_pickup_bay(1)
+navigator.go_to_rack(1)
 navigator.line_follow_until(0, 1)
-motors.turn_right(90)
+navigator.turn_right()
 motors.drive(BASE_SPEED, BASE_SPEED)
-sleep_ms(int(600.0 / BASE_SPEED))
-motors.stop()
+sleep_ms(int(500.0 / BASE_SPEED))
+navigator.line_follow_until(1, 1, True)
+navigator.turn_right(True)
+navigator.return_to_start_line()
+navigator.go_to_pickup_bay(0)
+
+# navigator.line_follow_until(1, 1)
+# motors.turn_right(90)
+# navigator.skip_junction(0, 1)
+# navigator.line_follow_until(1, 1)
+# motors.turn_left(90)
+# navigator.skip_junction(1, 1)
+# navigator.line_follow_until(1, 0)
+# motors.turn_left(90)
+# navigator.skip_junction(1, 0)
+# navigator.line_follow_until(1, 0)
+# motors.turn_left(90)
+# navigator.skip_junction(1, 1)
+# navigator.skip_junction(1, 0, 6)
+# navigator.line_follow_until(1, 0)
+# motors.turn_left(90)
+# navigator.skip_junction(0, 1)
+# navigator.line_follow_until(0, 1)
+# motors.turn_right(90)
+# motors.drive(BASE_SPEED, BASE_SPEED)
+# sleep_ms(int(600.0 / BASE_SPEED))
+# motors.stop()
 
 # line_follow_until(0, 1)
 # motors.turn_right(90)
