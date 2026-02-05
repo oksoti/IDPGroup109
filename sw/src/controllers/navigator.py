@@ -9,14 +9,18 @@ class Navigator:
         self.bay_number = 0  # which bay the robot is at (0 = start box, 1-4)
 
     def turn_left(self, reverse=False):
-        direction = -1 if reverse else 1
-        self.motors.drive(-0.3 * BASE_SPEED * direction, 1.0 * BASE_SPEED * direction)
+        if reverse:
+            self.motors.drive(-0.3 * BASE_SPEED, 1.0 * BASE_SPEED)
+        else:
+            self.motors.drive(-0.3 * BASE_SPEED, 1.0 * BASE_SPEED)
         sleep_ms(int(900.0 / BASE_SPEED))
         self.motors.stop()
 
     def turn_right(self, reverse=False):
-        direction = -1 if reverse else 1
-        self.motors.drive(1.0 * BASE_SPEED * direction, -0.3 * BASE_SPEED * direction)
+        if reverse:
+            self.motors.drive(1.0 * BASE_SPEED, -0.3 * BASE_SPEED)
+        else:
+            self.motors.drive(1.0 * BASE_SPEED, -0.3 * BASE_SPEED)
         sleep_ms(int(900.0 / BASE_SPEED))
         self.motors.stop()
 
@@ -129,11 +133,14 @@ class Navigator:
                 self.turn_right()
                 self.line_follow_until(1, 1)
                 self.turn_left()
+            else:
+                self.skip_junction(1, 0)
         else:
             if self.bay_number > 1:
                 self.turn_left()
                 self.line_follow_until(1, 1)
                 self.turn_right()
+            
             if rack_number > 1:
                 self.line_follow_until(1, 1)
                 self.line_follow_until(0, 1)
