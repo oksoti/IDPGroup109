@@ -116,7 +116,7 @@ class Navigator:
         self.bay_number = bay_number
 
     def go_to_rack(self, rack_number):
-        self.motors.turn_around(self.bay_number > 2)
+        self.turn_around(self.bay_number > 2)
         if self.bay_number == 2 or self.bay_number == 3:
             self.line_follow_until(1, 1)
         elif self.bay_number == 1:
@@ -155,7 +155,7 @@ class Navigator:
     def return_to_start_line(self):
         self.line_follow_until(1, 1)
         if self.rack_number == 2 or self.rack_number == 3:
-            self.motors.turn_around(self.rack_number == 3)
+            self.turn_around(self.rack_number == 3)
             if self.rack_number == 2:
                 self.line_follow_until(1, 0)
                 self.turn_left()
