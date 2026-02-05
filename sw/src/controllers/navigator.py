@@ -12,20 +12,19 @@ class Navigator:
         direction = -1 if reverse else 1
         self.motors.drive(-0.3 * BASE_SPEED * direction, 1.0 * BASE_SPEED * direction)
         sleep_ms(int(900.0 / BASE_SPEED))
-        self.stop()
+        self.motors.stop()
 
     def turn_right(self, reverse=False):
         direction = -1 if reverse else 1
         self.motors.drive(1.0 * BASE_SPEED * direction, -0.3 * BASE_SPEED * direction)
         sleep_ms(int(900.0 / BASE_SPEED))
-        self.stop()
+        self.motors.stop()
 
     def turn_around(self, clockwise=True):
         direction = 1 if clockwise else -1
-        duration = int(180 * 7)
         self.motors.drive(1.0 * BASE_SPEED * direction, -1.0 * BASE_SPEED * direction)
         sleep_ms(int(1260.0 / BASE_SPEED))
-        self.stop()
+        self.motors.stop()
 
     def line_follow_until(self, ol_target, or_target, reverse=False):
         direction = -1 if reverse else 1
