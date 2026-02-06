@@ -28,29 +28,30 @@ class SideBoxDetector:
     def read_distance_mm(self):
         # VL53L0X library: .read()
         if hasattr(self.sensor, "read"):
-            return self.sensor.read()
+            for _ in range(10):
+                d = self.sensor.read()
+                if d is not None and self.valid_min_mm <= d <= self.valid_max_mm:
+                    return d
+            return None
         # TMF8701 library: .get_distance_mm()
         if hasattr(self.sensor, "get_distance_mm"):
-            return self.sensor.get_distance_mm()
+            while self.sensor.is_data_ready() == False:
+                sleep_ms(10)
+            for _ in range(10):
+                d = self.sensor.get_distance_mm()
+                if d is not None and self.valid_min_mm <= d <= self.valid_max_mm:
+                    return d
+                sleep_ms(10)
+            return None
         raise RuntimeError("Sensor must provide read() or get_distance_mm()")
 
     def bay_occupied(self):
         close = 0
         valid = 0
 
-        for _ in range(self.samples):
-            d = self.read_distance_mm()
-
-            if d is not None and self.valid_min_mm <= d <= self.valid_max_mm:
-                valid += 1
-                if d <= self.threshold_mm:
-                    close += 1
-
-            sleep_ms(self.sample_delay_ms)
-
-        # If too few valid readings (less than half of samples, or less than 3), treat as empty (or flip to True for fail-safe)
-        if valid < max(3, self.samples // 2):
+        d = self.read_distance_mm()
+        print(d)
+        if d is not None:
+            return d <= self.threshold_mm
+        else:
             return False
-        
-        # If majority of valid readings (greater than half of valid readings) are recorded as close, bay is occupied, and will return True
-        return close >= (valid // 2 + 1)

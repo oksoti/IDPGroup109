@@ -31,28 +31,28 @@ right_motor = Motor(config.RIGHT_DIR_PIN, config.RIGHT_PWM_PIN, speed_mult=1.0)
 motors = MotorPair(left_motor, right_motor)
 
 i2c_left = I2C(config.I2C_ID_left, scl=Pin(config.I2C_SCL_PIN_left), sda=Pin(config.I2C_SDA_PIN_left), freq=config.I2C_FREQ_left)
-# i2c_right = I2C(config.I2C_ID_right, scl=Pin(config.I2C_SCL_PIN_right), sda=Pin(config.I2C_SDA_PIN_right), freq=config.I2C_FREQ_right)
+i2c_right = I2C(config.I2C_ID_right, scl=Pin(config.I2C_SCL_PIN_right), sda=Pin(config.I2C_SDA_PIN_right), freq=config.I2C_FREQ_right)
 
 left_tof = VL53L0X(i2c_left)          # VL53 init
-# right_tof = DFRobot_TMF8701(i2c_right) # TMF init
+right_tof = DFRobot_TMF8701(i2c_right) # TMF init
 
 left_detector = SideBoxDetector(
     left_tof,
-    threshold_mm=config.BAY_OCCUPIED_THRESHOLD_MM,
+    threshold_mm=config.BAY_OCCUPIED_THRESHOLD_MM_LEFT,
     samples=config.BOX_SAMPLES,
     sample_delay_ms=config.BOX_SAMPLE_DELAY_MS
 )
 
-# right_detector = SideBoxDetector(
-#     right_tof,
-#     threshold_mm=config.BAY_OCCUPIED_THRESHOLD_MM,
-#     samples=config.BOX_SAMPLES,
-#     sample_delay_ms=config.BOX_SAMPLE_DELAY_MS
-# )
+right_detector = SideBoxDetector(
+    right_tof,
+    threshold_mm=config.BAY_OCCUPIED_THRESHOLD_MM_RIGHT,
+    samples=config.BOX_SAMPLES,
+    sample_delay_ms=config.BOX_SAMPLE_DELAY_MS
+)
 
 print("Running. Press Ctrl+C to stop.")
 
-bay_controller = BayController(left_detector, left_detector)
+bay_controller = BayController(left_detector, right_detector)
 
 # did_turn = bay_controller.attempt_turn_into_bay("left")
 
@@ -66,7 +66,19 @@ led_4 = LED(config.LED_4_PIN)
 
 
 while not button.pressed():
-    sleep_ms(100)
+    if bay_controller.bay_occupied(1):
+        led_2.on()
+        led_3.off()
+    else:
+        led_3.on()
+        led_2.off()
+    if bay_controller.bay_occupied(2):
+        led_1.on()
+        led_4.off()
+    else:
+        led_4.on()
+        led_1.off()
+    sleep_ms(1000)
 
 led_1.on()
 led_2.on()
@@ -82,7 +94,7 @@ led_4.off()
 # navigator.turn_left()
 # navigator.line_follow_until(1, 1)
 
-print(bay_controller.bay_occupied(2))
+print(bay_controller.bay_occupied(1))
 
 navigator.leave_start_box()
 navigator.go_to_pickup_bay(1)
@@ -90,7 +102,7 @@ navigator.go_to_rack(1)
 navigator.skip_junction(0, 1)
 print('skipped')
 navigator.line_follow_until(0, 1)
-if bay_controller.bay_occupied(2):
+if bay_controller.bay_occupied(1):
     led_2.on()
 else:
     led_3.on()
