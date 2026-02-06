@@ -16,7 +16,7 @@ class BayController:
             return self.left_detector.bay_occupied()
         raise ValueError("bay_number must be 1, 2, 3, or 4")
 
-    def attempt_turn_into_bay(self, bay_number, direction):
+    def attempt_turn_into_bay(self, bay_number):
         c = self.cfg
 
         # Stabilise for ranging
@@ -27,6 +27,7 @@ class BayController:
 
         # Occupancy check (correct side based on bay_number)
         if self.bay_occupied(bay_number):
+            print(f"Bay {bay_number} is occupied, skipping turn")
             self.drive.drive(c.BAY_SKIP_SPEED, c.BAY_SKIP_SPEED)
             sleep_ms(c.BAY_SKIP_MS)
             self.drive.stop()
@@ -34,12 +35,8 @@ class BayController:
             return False
 
         # Turn in (MotorPair.turn_left/right already sleeps + stops)
-        if direction == "left":
-            self.drive.turn_left(c.BAY_TURN_DEG, turn_speed=c.BAY_TURN_SPEED, ms_per_deg=c.BAY_MS_PER_DEG)
-        elif direction == "right":
-            self.drive.turn_right(c.BAY_TURN_DEG, turn_speed=c.BAY_TURN_SPEED, ms_per_deg=c.BAY_MS_PER_DEG)
-        else:
-            raise ValueError("direction must be 'left' or 'right'")
+        '''if direction == "left":'''
+        '''if direction == "right":'''
 
         sleep_ms(c.BAY_SETTLE_MS)
         return True

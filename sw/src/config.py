@@ -48,3 +48,13 @@ BAY_SKIP_SPEED = 30
 BAY_SKIP_MS = 200
 BAY_TURN_SPEED = 35
 BAY_SETTLE_MS = 30
+
+I2C_ID_left = 0
+I2C_SDA_PIN_left = 8
+I2C_SCL_PIN_left = 9
+I2C_FREQ_left = 400_000
+
+I2C_ID_right = 1
+I2C_SDA_PIN_right = 10
+I2C_SCL_PIN_right = 11
+I2C_FREQ_right = 400_000

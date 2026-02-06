@@ -1,18 +1,21 @@
 from utime import sleep_ms
+from machine import I2C, Pin
+import random
 
+# Sensors
+from libs.VL53L0X.VL53L0X import VL53L0X
+from libs.DFRobot_TMF8x01.DFRobot_TMF8x01 import DFRobot_TMF8701
+
+# Drivers
 from src.drivers.line_sensor import LineSensorArray
 from src.drivers.motor import Motor, MotorPair
-import src.config as config
-from src.controllers.bay_controller import BayController
-import random
 from src.drivers.box_detector import SideBoxDetector
-import src.config as config
 
-# --- Motor pin configuration (UPDATE to match your wiring) ---
-'''LEFT_MOTOR_DIR_PIN = 6
-LEFT_MOTOR_PWM_PIN = 7
-RIGHT_MOTOR_DIR_PIN = 8
-RIGHT_MOTOR_PWM_PIN = 9'''
+# Controllers
+from src.controllers.bay_controller import BayController
+
+# Config
+import src.config as config
 
 # --- Speeds ---
 BASE_SPEED = 1.0
@@ -27,8 +30,11 @@ motors = MotorPair(left_motor, right_motor)
 
 print("Running. Press Ctrl+C to stop.")
 
-# left_tof = VL53L0X(...)          # your VL53 init
-# right_tof = DFRobot_TMF8701(...) # your TMF init
+i2c_left = I2C(config.I2C_ID_left, scl=Pin(config.I2C_SCL_PIN_left), sda=Pin(config.I2C_SDA_PIN_left), freq=config.I2C_FREQ_left)
+i2c_right = I2C(config.I2C_ID_right, scl=Pin(config.I2C_SCL_PIN_right), sda=Pin(config.I2C_SDA_PIN_right), freq=config.I2C_FREQ_right)
+
+left_tof = VL53L0X(i2c_left)          # VL53 init
+right_tof = DFRobot_TMF8701(i2c_right) # TMF init
 
 left_detector = SideBoxDetector(
     left_tof,
