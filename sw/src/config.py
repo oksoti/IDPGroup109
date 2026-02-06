@@ -29,7 +29,7 @@ KD = 0.05
 TURN_LIMIT = 1.0    # max magnitude of turn command
 
 BASE_SPEED = 1.0
-REALIGN_SPEED = 0.6
+REALIGN_SPEED = 0.3
 
 # Loop timing
 LOOP_DELAY_MS = 10  # 10ms = 100 Hz loop

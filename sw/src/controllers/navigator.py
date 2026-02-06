@@ -9,37 +9,13 @@ class Navigator:
         self.bay_number = 0  # which bay the robot is at (0 = start box, 1-4)
 
     def turn_left(self):
-        for _ in range(int(120.0 / BASE_SPEED)):
-            ol, ml, mr, or_ = self.line_sensor.read_named()
-
-            if ml == 1 and mr == 1:
-                self.motors.drive(-0.2 * BASE_SPEED, 0.9 * BASE_SPEED)
-            elif ml == 1 and mr == 0:
-                self.motors.drive(-0.5 * BASE_SPEED, 0.6 * BASE_SPEED)
-            elif ml == 0 and mr == 1:
-                self.motors.drive(0.1 * BASE_SPEED, 1.0 * BASE_SPEED)
-            else:
-                self.motors.drive(-0.2 * BASE_SPEED, 1.0 * BASE_SPEED)
-
-            sleep_ms(10)
-
+        self.motors.drive(-0.3 * BASE_SPEED, 1.0 * BASE_SPEED)
+        sleep_ms(int(900.0 / BASE_SPEED))
         self.motors.stop()
 
     def turn_right(self):
-        for _ in range(int(120.0 / BASE_SPEED)):
-            ol, ml, mr, or_ = self.line_sensor.read_named()
-
-            if ml == 1 and mr == 1:
-                self.motors.drive(0.9 * BASE_SPEED, -0.2 * BASE_SPEED)
-            elif ml == 1 and mr == 0:
-                self.motors.drive(0.6 * BASE_SPEED, -0.5 * BASE_SPEED)
-            elif ml == 0 and mr == 1:
-                self.motors.drive(1.0 * BASE_SPEED, 0.1 * BASE_SPEED)
-            else:
-                self.motors.drive(0.8 * BASE_SPEED, -0.2 * BASE_SPEED)
-
-            sleep_ms(10)
-
+        self.motors.drive(1.0 * BASE_SPEED, -0.3 * BASE_SPEED)
+        sleep_ms(int(900.0 / BASE_SPEED))
         self.motors.stop()
 
     def turn_around(self, clockwise=True):
