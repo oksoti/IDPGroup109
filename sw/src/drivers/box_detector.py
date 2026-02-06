@@ -16,6 +16,15 @@ class SideBoxDetector:
         self.valid_min_mm = valid_min_mm
         self.valid_max_mm = valid_max_mm
 
+        if hasattr(self.sensor, "begin"):
+            while sensor.begin() != 0:
+                sleep_ms(100)
+            sensor.start_measurement(calib_m = sensor.eMODE_NO_CALIB, mode = sensor.eDISTANCE)
+        else:
+            sensor.set_Vcsel_pulse_period(sensor.vcsel_period_type[0], 18)
+            sensor.set_Vcsel_pulse_period(sensor.vcsel_period_type[1], 14)
+            sensor.start()
+
     def read_distance_mm(self):
         # VL53L0X library: .read()
         if hasattr(self.sensor, "read"):

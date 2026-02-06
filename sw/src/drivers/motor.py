@@ -3,13 +3,15 @@ from utime import sleep_ms
 
 
 class Motor:
-    def __init__(self, dir_pin, pwm_pin, freq=1000):
+    def __init__(self, dir_pin, pwm_pin, freq=1000, speed_mult=1.0):
         self.dir = Pin(dir_pin, Pin.OUT)
         self.pwm = PWM(Pin(pwm_pin))
         self.pwm.freq(freq)
         self.pwm.duty_u16(0)
+        self.speed_mult = speed_mult
 
     def set_speed(self, speed):
+        speed *= self.speed_mult
         if speed >= 0:
             self.dir.value(0)
         else:
