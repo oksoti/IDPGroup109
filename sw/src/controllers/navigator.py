@@ -1,4 +1,4 @@
-from ..config import BASE_SPEED, REALIGN_SPEED
+from ..config import BASE_SPEED, REALIGN_SPEED, OUTSIDE_TURN_SPEED, INSIDE_TURN_SPEED, TURN_AROUND_SPEED, TURN_DURATION, TURN_AROUND_DURATION
 from utime import sleep_ms
 
 class Navigator:
@@ -9,19 +9,19 @@ class Navigator:
         self.bay_number = 0  # which bay the robot is at (0 = start box, 1-4)
 
     def turn_left(self):
-        self.motors.drive(-0.2 * BASE_SPEED, 1.0 * BASE_SPEED)
-        sleep_ms(int(1000.0 / BASE_SPEED))
+        self.motors.drive(INSIDE_TURN_SPEED, OUTSIDE_TURN_SPEED)
+        sleep_ms(TURN_DURATION)
         self.motors.stop()
 
     def turn_right(self):
-        self.motors.drive(1.0 * BASE_SPEED, -0.2 * BASE_SPEED)
-        sleep_ms(int(1000.0 / BASE_SPEED))
+        self.motors.drive(OUTSIDE_TURN_SPEED, INSIDE_TURN_SPEED)
+        sleep_ms(TURN_DURATION)
         self.motors.stop()
 
     def turn_around(self, clockwise=True):
         direction = 1 if clockwise else -1
-        self.motors.drive(1.0 * BASE_SPEED * direction, -1.0 * BASE_SPEED * direction)
-        sleep_ms(int(1260.0 / BASE_SPEED))
+        self.motors.drive(TURN_AROUND_SPEED * direction, -TURN_AROUND_SPEED * direction)
+        sleep_ms(TURN_AROUND_DURATION)
         self.motors.stop()
 
     def line_follow_until(self, ol_target, or_target, reverse=False):
@@ -43,13 +43,12 @@ class Navigator:
                 self.motors.stop()
 
             sleep_ms(10)
+        self.motors.stop()
 
     def skip_junction(self, ol_target, or_target, quantity=1):
         for _ in range(quantity):
             self.line_follow_until(ol_target, or_target)
-            self.motors.drive(BASE_SPEED, BASE_SPEED)
-            sleep_ms(int(200.0 / BASE_SPEED))  # drive forward past the junction
-            self.motors.stop()
+            self.line_follow_until(0, 0)
 
     def leave_start_box(self):
         self.motors.drive(BASE_SPEED, BASE_SPEED)
@@ -59,6 +58,7 @@ class Navigator:
                 sleep_ms(int(200.0 / BASE_SPEED))
                 break
             sleep_ms(10)
+        self.motors.stop()
 
     def enter_start_box(self):
         self.motors.drive(BASE_SPEED, BASE_SPEED)

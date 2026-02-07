@@ -24,7 +24,7 @@ RIGHT_MOTOR_DIR_PIN = 8
 RIGHT_MOTOR_PWM_PIN = 9'''
 
 # --- Hardware init ---
-line_sensor = LineSensorArray(config.LINE_PINS, white_is_1=config.LINE_WHITE_IS_1)
+line_sensor = LineSensorArray(config.LINE_PINS)
 
 left_motor = Motor(config.LEFT_DIR_PIN, config.LEFT_PWM_PIN, speed_mult=0.95)
 right_motor = Motor(config.RIGHT_DIR_PIN, config.RIGHT_PWM_PIN, speed_mult=1.0)
@@ -64,7 +64,7 @@ led_2 = LED(config.LED_2_PIN)
 led_3 = LED(config.LED_3_PIN)
 led_4 = LED(config.LED_4_PIN)
 
-
+# simple loop to test the box detection before starting the main routine (waiting for the button to be pressed)
 while not button.pressed():
     if bay_controller.bay_occupied(1):
         led_2.on()

@@ -3,7 +3,6 @@
 # --- Line sensors (4 sensors, left -> right) ---
 # Update these to the GPIO pins your 4 line sensors are wired to (left->right order)
 LINE_PINS = [18, 19, 20, 21]
-LINE_WHITE_IS_1 = True  # set False if your sensors output 0 on white and 1 on black
 
 # --- Motors ---
 # Update these to match your motor driver wiring (DIR pin + PWM pin for each motor)
@@ -22,14 +21,14 @@ LED_2_PIN = 14
 LED_3_PIN = 16
 LED_4_PIN = 17
 
-# --- Control tuning ---
-BASE_SPEED = 0.55   # 0..1
-KP = 0.30
-KD = 0.05
-TURN_LIMIT = 1.0    # max magnitude of turn command
-
 BASE_SPEED = 1.0
 REALIGN_SPEED = 0.3
+OUTSIDE_TURN_SPEED = 1.0
+INSIDE_TURN_SPEED = -0.2 * OUTSIDE_TURN_SPEED
+TURN_AROUND_SPEED = 1.0
+
+TURN_DURATION = int(1000.0 / OUTSIDE_TURN_SPEED)
+TURN_AROUND_DURATION = int(1260.0 / TURN_AROUND_SPEED)
 
 # Loop timing
 LOOP_DELAY_MS = 10  # 10ms = 100 Hz loop
