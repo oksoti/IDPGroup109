@@ -1,4 +1,4 @@
-from ..config import BASE_SPEED, REALIGN_SPEED, OUTSIDE_TURN_SPEED, INSIDE_TURN_SPEED, TURN_AROUND_SPEED, TURN_DURATION, TURN_AROUND_DURATION
+from ..config import BASE_SPEED, REALIGN_SPEED, OUTSIDE_TURN_SPEED, INSIDE_TURN_SPEED, TURN_AROUND_SPEED, LEFT_TURN_DURATION, RIGHT_TURN_DURATION, TURN_AROUND_DURATION
 from utime import sleep_ms
 
 class Navigator:
@@ -10,12 +10,12 @@ class Navigator:
 
     def turn_left(self):
         self.motors.drive(INSIDE_TURN_SPEED, OUTSIDE_TURN_SPEED)
-        sleep_ms(TURN_DURATION)
+        sleep_ms(LEFT_TURN_DURATION)
         self.motors.stop()
 
     def turn_right(self):
         self.motors.drive(OUTSIDE_TURN_SPEED, INSIDE_TURN_SPEED)
-        sleep_ms(TURN_DURATION)
+        sleep_ms(RIGHT_TURN_DURATION)
         self.motors.stop()
 
     def turn_around(self, clockwise=True):

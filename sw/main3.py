@@ -24,7 +24,7 @@ RIGHT_MOTOR_DIR_PIN = 8
 RIGHT_MOTOR_PWM_PIN = 9'''
 
 # --- Hardware init ---
-line_sensor = LineSensorArray(config.LINE_PINS, white_is_1=config.LINE_WHITE_IS_1)
+line_sensor = LineSensorArray(config.LINE_PINS)
 
 left_motor = Motor(config.LEFT_DIR_PIN, config.LEFT_PWM_PIN, speed_mult=0.95)
 right_motor = Motor(config.RIGHT_DIR_PIN, config.RIGHT_PWM_PIN, speed_mult=1.0)
@@ -52,7 +52,7 @@ right_detector = SideBoxDetector(
 
 print("Running. Press Ctrl+C to stop.")
 
-bay_controller = BayController(left_detector, left_detector)
+bay_controller = BayController(left_detector, right_detector)
 
 # did_turn = bay_controller.attempt_turn_into_bay("left")
 
