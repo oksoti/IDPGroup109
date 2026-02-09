@@ -31,24 +31,24 @@ right_motor = Motor(config.RIGHT_DIR_PIN, config.RIGHT_PWM_PIN, speed_mult=1.0)
 motors = MotorPair(left_motor, right_motor)
 
 i2c_left = I2C(config.I2C_ID_left, scl=Pin(config.I2C_SCL_PIN_left), sda=Pin(config.I2C_SDA_PIN_left), freq=config.I2C_FREQ_left)
-# i2c_right = I2C(config.I2C_ID_right, scl=Pin(config.I2C_SCL_PIN_right), sda=Pin(config.I2C_SDA_PIN_right), freq=config.I2C_FREQ_right)
+i2c_right = I2C(config.I2C_ID_right, scl=Pin(config.I2C_SCL_PIN_right), sda=Pin(config.I2C_SDA_PIN_right), freq=config.I2C_FREQ_right)
 
 left_tof = VL53L0X(i2c_left)          # VL53 init
-# right_tof = DFRobot_TMF8701(i2c_right) # TMF init
+right_tof = DFRobot_TMF8701(i2c_right) # TMF init
 
 left_detector = SideBoxDetector(
     left_tof,
-    threshold_mm=config.BAY_OCCUPIED_THRESHOLD_MM,
+    threshold_mm=config.BAY_OCCUPIED_THRESHOLD_MM_LEFT,
     samples=config.BOX_SAMPLES,
     sample_delay_ms=config.BOX_SAMPLE_DELAY_MS
 )
 
-# right_detector = SideBoxDetector(
-#     right_tof,
-#     threshold_mm=config.BAY_OCCUPIED_THRESHOLD_MM,
-#     samples=config.BOX_SAMPLES,
-#     sample_delay_ms=config.BOX_SAMPLE_DELAY_MS
-# )
+right_detector = SideBoxDetector(
+    right_tof,
+    threshold_mm=config.BAY_OCCUPIED_THRESHOLD_MM_RIGHT,
+    samples=config.BOX_SAMPLES,
+    sample_delay_ms=config.BOX_SAMPLE_DELAY_MS
+)
 
 print("Running. Press Ctrl+C to stop.")
 
