@@ -87,15 +87,14 @@ print(bay_controller.bay_occupied(2))
 navigator.leave_start_box()
 navigator.go_to_pickup_bay(1)
 navigator.go_to_rack(1)
-navigator.skip_junction(0, 1)
-print('skipped')
-navigator.line_follow_until(0, 1)
-if bay_controller.bay_occupied(2):
-    led_2.on()
-    navigator.skip_junction(0, 1)
-else:
-    led_3.on()
-navigator.turn_right()
+for i in range(6):
+    navigator.line_follow_until(0, 1)
+    if bay_controller.bay_occupied(2):
+        led_2.on()
+        navigator.skip_junction(0, 1)
+    else:
+        led_3.on()
+        break
 motors.drive(config.BASE_SPEED, config.BASE_SPEED)
 sleep_ms(int(250.0 / config.BASE_SPEED))
 navigator.line_follow_until(1, 1, True)
