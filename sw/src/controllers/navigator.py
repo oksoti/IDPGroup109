@@ -134,6 +134,8 @@ class Navigator:
                 self.turn_left()
                 self.line_follow_until(1, 1)
                 self.turn_right()
+            else:
+                self.skip_junction(0, 1)
             
             if rack_number > 1:
                 self.line_follow_until(1, 1)
