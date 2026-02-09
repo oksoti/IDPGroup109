@@ -94,7 +94,16 @@ for i in range(6):
         navigator.skip_junction(0, 1)
     else:
         led_3.on()
+        navigator.turn_right()
+        motors.drive(config.BASE_SPEED, config.BASE_SPEED)
+        sleep_ms(int(250.0 / config.BASE_SPEED))
+        navigator.line_follow_until(1, 1, True)
+        navigator.turn_left()
+        turned = True
         break
+navigator.return_to_start_line()
+navigator.go_to_pickup_bay(0)
+navigator.enter_start_box()
 navigator.turn_right()
 motors.drive(config.BASE_SPEED, config.BASE_SPEED)
 sleep_ms(int(250.0 / config.BASE_SPEED))
