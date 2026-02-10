@@ -78,12 +78,6 @@ led_2.off()
 led_3.off()
 led_4.off()
 
-# navigator.line_follow_until(1, 1)
-# navigator.turn_left()
-# navigator.line_follow_until(1, 1)
-
-print(rack_controller.rack_occupied(2))
-
 navigator.leave_start_box()
 navigator.go_to_pickup_bay(1)
 navigator.go_to_rack(4)

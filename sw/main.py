@@ -94,8 +94,6 @@ led_4.off()
 # navigator.turn_left()
 # navigator.line_follow_until(1, 1)
 
-print(bay_controller.rack_occupied(1))
-
 navigator.leave_start_box()
 navigator.go_to_pickup_bay(1)
 navigator.go_to_rack(1)
