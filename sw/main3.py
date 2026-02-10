@@ -80,12 +80,20 @@ led_4.off()
 
 navigator.leave_start_box()
 navigator.go_to_pickup_bay(1)
-navigator.go_to_rack(4)
+rack_number = 4
+navigator.go_to_rack(rack_number)
 for i in range(6):
-    navigator.line_follow_until(0, 1)
-    if rack_controller.rack_occupied(4):
+    if rack_number == 1 or rack_number == 2:
+        navigator.line_follow_until(0, 1)
+    else:
+        navigator.line_follow_until(1, 0)
+    
+    if rack_controller.rack_occupied(rack_number):
         led_2.on()
-        navigator.skip_junction(0, 1)
+        if rack_number == 1 or rack_number == 2:
+            navigator.skip_junction(0, 1)
+        else:
+            navigator.skip_junction(1, 0)
     else:
         led_3.on()
         navigator.approach_rack()
