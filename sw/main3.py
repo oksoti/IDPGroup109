@@ -12,7 +12,7 @@ from src.drivers.box_detector import BoxDetector
 from src.drivers.button import Button
 from src.drivers.led import LED
 from src.controllers.navigator import Navigator
-from sw.src.controllers.rack_controller import RackController
+from src.controllers.rack_controller import RackController
 
 # Config
 import src.config as config
