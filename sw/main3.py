@@ -17,12 +17,6 @@ from src.controllers.rack_controller import RackController
 # Config
 import src.config as config
 
-# --- Motor pin configuration (UPDATE to match your wiring) ---
-'''LEFT_MOTOR_DIR_PIN = 6
-LEFT_MOTOR_PWM_PIN = 7
-RIGHT_MOTOR_DIR_PIN = 8
-RIGHT_MOTOR_PWM_PIN = 9'''
-
 # --- Hardware init ---
 line_sensor = LineSensorArray(config.LINE_PINS)
 

@@ -1,5 +1,6 @@
 from src.drivers.servo import Servo
 import src.config as config
+from utime import sleep_ms
 
 class Grabber:
 
@@ -22,11 +23,8 @@ class Grabber:
         self.jaw_closed = jaw_closed
 
         # Grabber tracks current angles because Servo.set_angle needs them
-        self._tilt_angle = 0
-        self._jaw_angle = 0
-
-        # optional state
-        self.jaw_is_open = None
+        self._tilt_angle = tilt_up
+        self._jaw_angle = jaw_open
 
     # ---------------- low-level setters (match Servo API) ----------------
 
@@ -51,21 +49,10 @@ class Grabber:
     def open(self):
         """Open jaws."""
         self.set_jaw(self.jaw_open)
-        self.jaw_is_open = True
 
     def close(self):
         """Close jaws."""
         self.set_jaw(self.jaw_closed)
-        self.jaw_is_open = False
-
-    def toggle_jaw(self):
-        """Toggle open <-> close."""
-        if self.jaw_is_open is None:
-            self.open()
-        elif self.jaw_is_open:
-            self.close()
-        else:
-            self.open()
 
     # ---------------- sequences ----------------
 
@@ -77,14 +64,20 @@ class Grabber:
     def pick(self):
         """Open -> lower -> close -> lift."""
         self.open()
+        sleep_ms(100)
         self.tilt_downwards()
+        sleep_ms(100)
         self.close()
+        sleep_ms(100)
         self.tilt_upwards()
+        sleep_ms(100)
 
     def drop(self):
         """Lower -> open -> lift."""
         self.tilt_downwards()
+        sleep_ms(100)
         self.open()
+        sleep_ms(100)
         self.tilt_upwards()
 
 

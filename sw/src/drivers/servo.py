@@ -1,27 +1,28 @@
 from machine import PWM, Pin, ADC
-from time import sleep
+from utime import sleep_ms
 
 class Servo:
     def __init__(self, pin_number, freq=50):
         self.pwm = PWM(Pin(pin_number))
         self.pwm.freq(freq)
         self.pwm.duty_u16(0)  # Start with the servo off
-        sleep(0.1)  # Short delay to ensure the servo initializes
 
     def set_angle(self, current_angle, desired_angle):
-        duty = int(1500 + (desired_angle / 270) * 7000)  # 1500 for 0 degrees, 8500 for 270 degrees
-        self.pwm.duty_u16(duty)
+        current_duty = int(1500 + (current_angle / 270) * 7000)  # 1500 for 0 degrees, 8500 for 270 degrees
+        desired_duty = int(1500 + (desired_angle / 270) * 7000)  # 1500 for 0 degrees, 8500 for 270 degrees
         if (desired_angle > current_angle):  
-            for duty in range(current_angle,desired_angle,20):
+            for duty in range(current_duty,desired_duty,20):
                 
                 self.pwm.duty_u16(duty)
                 #print(f"Raw Value: {raw_value}, Voltage: {voltage:.2f}V")
                 print(f"Processing position: {duty}")
-                sleep(0.02)
+                sleep_ms(20)
 
-        if (desired_angle < current_angle):    
-            for duty in range(desired_angle,current_angle,-20):
+        if (desired_angle < current_angle):   
+            for duty in range(current_duty,desired_duty,-20):
                 self.pwm.duty_u16(duty)
                 #print(f"Raw Value: {raw_value}, Voltage: {voltage:.2f}V")
                 print(f"Processing position: {duty}")
-                sleep(0.02)
+                sleep_ms(20)
+
+        self.pwm.duty_u16(desired_duty)  # Set to the final desired position
