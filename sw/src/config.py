@@ -59,3 +59,7 @@ I2C_ID_right = 1
 I2C_SDA_PIN_right = 10
 I2C_SCL_PIN_right = 11
 I2C_FREQ_right = 100000
+
+SERVO_1_PIN = 13
+SERVO_2_PIN = 15
+SERVO_FREQ = 50
