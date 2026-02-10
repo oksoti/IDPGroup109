@@ -45,6 +45,23 @@ class Navigator:
             sleep_ms(10)
         self.motors.stop()
 
+    def line_follow_for_duration(self, duration, reverse=False):
+        direction = -1 if reverse else 1
+        for _ in range(duration // 10):
+            ol, ml, mr, or_ = self.line_sensor.read_named()
+
+            if ml == 1 and mr == 1:
+                self.motors.drive(BASE_SPEED * direction, BASE_SPEED * direction)
+            elif ml == 1 and mr == 0:
+                self.motors.drive(REALIGN_SPEED * direction, BASE_SPEED * direction)
+            elif ml == 0 and mr == 1:
+                self.motors.drive(BASE_SPEED * direction, REALIGN_SPEED * direction)
+            else:
+                self.motors.stop()
+
+            sleep_ms(10)
+        self.motors.stop()
+
     def skip_junction(self, ol_target, or_target, quantity=1):
         for _ in range(quantity):
             self.line_follow_until(ol_target, or_target)
@@ -109,9 +126,24 @@ class Navigator:
                 elif bay_number == 0:
                     self.skip_junction(1, 0)
                     self.line_follow_until(1, 0)
-                self.turn_left()        
-        self.line_follow_until(1, 1)
+                self.turn_left()
+        if bay_number != 0:       
+            self.line_follow_until(1, 1)
         self.bay_number = bay_number
+
+    def approach_rack(self):
+        if self.rack_number == 1 or self.rack_number == 3:
+            self.turn_right()
+        else:
+            self.turn_left()
+        self.line_follow_for_duration(200)
+
+    def exit_rack(self):
+        self.line_follow_until(1, 1, True)
+        if self.rack_number == 1 or self.rack_number == 3:
+            self.turn_left()
+        else:
+            self.turn_right()
 
     def go_to_rack(self, rack_number):
         self.turn_around(self.bay_number > 2)

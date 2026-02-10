@@ -1,12 +1,6 @@
 from utime import sleep_ms
 
-class SideBoxDetector:
-    """
-    Generic occupancy detector for one distance sensor.
-    Returns True if an object is detected within threshold_mm (e.g. 180mm).
-    Uses multiple samples + majority vote to reduce noise.
-    """
-
+class BoxDetector:
     def __init__(self, sensor, threshold_mm=180, samples=7, sample_delay_ms=10,
                  valid_min_mm=20, valid_max_mm=2000):
         self.sensor = sensor
@@ -45,10 +39,7 @@ class SideBoxDetector:
             return None
         raise RuntimeError("Sensor must provide read() or get_distance_mm()")
 
-    def bay_occupied(self):
-        close = 0
-        valid = 0
-
+    def rack_occupied(self):
         d = self.read_distance_mm()
         print(d)
         if d is not None:

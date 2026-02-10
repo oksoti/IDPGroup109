@@ -8,11 +8,11 @@ from libs.DFRobot_TMF8x01.DFRobot_TMF8x01 import DFRobot_TMF8701
 # Drivers
 from src.drivers.line_sensor import LineSensorArray
 from src.drivers.motor import Motor, MotorPair
-from src.drivers.box_detector import SideBoxDetector
+from src.drivers.box_detector import BoxDetector
 from src.drivers.button import Button
 from src.drivers.led import LED
 from src.controllers.navigator import Navigator
-from src.controllers.bay_controller import BayController
+from sw.src.controllers.rack_controller import RackController
 
 # Config
 import src.config as config
@@ -36,14 +36,14 @@ i2c_right = I2C(config.I2C_ID_right, scl=Pin(config.I2C_SCL_PIN_right), sda=Pin(
 left_tof = VL53L0X(i2c_left)          # VL53 init
 right_tof = DFRobot_TMF8701(i2c_right) # TMF init
 
-left_detector = SideBoxDetector(
+left_detector = BoxDetector(
     left_tof,
     threshold_mm=config.BAY_OCCUPIED_THRESHOLD_MM_LEFT,
     samples=config.BOX_SAMPLES,
     sample_delay_ms=config.BOX_SAMPLE_DELAY_MS
 )
 
-right_detector = SideBoxDetector(
+right_detector = BoxDetector(
     right_tof,
     threshold_mm=config.BAY_OCCUPIED_THRESHOLD_MM_RIGHT,
     samples=config.BOX_SAMPLES,
@@ -52,7 +52,7 @@ right_detector = SideBoxDetector(
 
 print("Running. Press Ctrl+C to stop.")
 
-bay_controller = BayController(left_detector, right_detector)
+rack_controller = RackController(left_detector, right_detector)
 
 # did_turn = bay_controller.attempt_turn_into_bay("left")
 
@@ -82,56 +82,21 @@ led_4.off()
 # navigator.turn_left()
 # navigator.line_follow_until(1, 1)
 
-print(bay_controller.bay_occupied(2))
+print(rack_controller.rack_occupied(2))
 
 navigator.leave_start_box()
 navigator.go_to_pickup_bay(1)
-navigator.go_to_rack(1)
+navigator.go_to_rack(4)
 for i in range(6):
     navigator.line_follow_until(0, 1)
-    if bay_controller.bay_occupied(1):
+    if rack_controller.rack_occupied(4):
         led_2.on()
         navigator.skip_junction(0, 1)
     else:
         led_3.on()
-        navigator.turn_right()
-        motors.drive(config.BASE_SPEED, config.BASE_SPEED)
-        sleep_ms(int(250.0 / config.BASE_SPEED))
-        navigator.line_follow_until(1, 1, True)
-        navigator.turn_left()
-        turned = True
+        navigator.approach_rack()
+        navigator.exit_rack()
         break
 navigator.return_to_start_line()
 navigator.go_to_pickup_bay(0)
 navigator.enter_start_box()
-navigator.turn_right()
-motors.drive(config.BASE_SPEED, config.BASE_SPEED)
-sleep_ms(int(250.0 / config.BASE_SPEED))
-navigator.line_follow_until(1, 1, True)
-navigator.turn_left()
-navigator.return_to_start_line()
-navigator.go_to_pickup_bay(0)
-navigator.enter_start_box()
-
-# line following test:
-# navigator.line_follow_until(1, 1)
-# motors.turn_right(90)
-# navigator.skip_junction(0, 1)
-# navigator.line_follow_until(1, 1)
-# motors.turn_left(90)
-# navigator.skip_junction(1, 1)
-# navigator.line_follow_until(1, 0)
-# motors.turn_left(90)
-# navigator.skip_junction(1, 0)
-# navigator.line_follow_until(1, 0)
-# motors.turn_left(90)
-# navigator.skip_junction(1, 1)
-# navigator.skip_junction(1, 0, 6)
-# navigator.line_follow_until(1, 0)
-# motors.turn_left(90)
-# navigator.skip_junction(0, 1)
-# navigator.line_follow_until(0, 1)
-# motors.turn_right(90)
-# motors.drive(BASE_SPEED, BASE_SPEED)
-# sleep_ms(int(600.0 / BASE_SPEED))
-# motors.stop()

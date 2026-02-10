@@ -3,7 +3,7 @@ from utime import sleep_ms
 from src.drivers.line_sensor import LineSensorArray
 from src.drivers.motor import Motor, MotorPair
 import src.config as config
-from src.controllers.bay_controller import BayController
+from sw.src.controllers.rack_controller import RackController
 import random
 
 # --- Motor pin configuration (UPDATE to match your wiring) ---
