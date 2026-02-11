@@ -13,6 +13,8 @@ from src.drivers.button import Button
 from src.drivers.led import LED
 from src.controllers.navigator import Navigator
 from src.controllers.rack_controller import RackController
+from src.controllers.grabber import Grabber
+from src.drivers.servo import Servo
 
 # Config
 import src.config as config
@@ -52,6 +54,11 @@ bay_controller = RackController(left_detector, right_detector)
 
 navigator = Navigator(motors, line_sensor)
 
+# Grabber setup
+tilt_servo = Servo(config.SERVO_1_PIN, config.SERVO_FREQ)
+jaw_servo = Servo(config.SERVO_2_PIN, config.SERVO_FREQ)
+grabber = Grabber(tilt_servo, jaw_servo)
+
 button = Button(config.START_BUTTON_PIN)
 led_1 = LED(config.LED_1_PIN)
 led_2 = LED(config.LED_2_PIN)
@@ -84,48 +91,48 @@ led_2.off()
 led_3.off()
 led_4.off()
 
-# navigator.line_follow_until(1, 1)
-# navigator.turn_left()
-# navigator.line_follow_until(1, 1)
+# Home the grabber before starting
+grabber.home()
 
+# Leave start box
 navigator.leave_start_box()
+
+# === Bay 1 -> Rack 1 ===
 navigator.go_to_pickup_bay(1)
+grabber.pick()
 navigator.go_to_rack(1)
-navigator.skip_junction(0, 1)
-print('skipped')
-navigator.line_follow_until(0, 1)
-if bay_controller.rack_occupied(1):
-    led_2.on()
-else:
-    led_3.on()
-navigator.turn_right()
-motors.drive(config.BASE_SPEED, config.BASE_SPEED)
-sleep_ms(int(250.0 / config.BASE_SPEED))
-navigator.line_follow_until(1, 1, True)
-navigator.turn_left()
+navigator.approach_rack()
+grabber.drop()
+navigator.exit_rack()
 navigator.return_to_start_line()
+
+# === Bay 2 -> Rack 2 ===
+navigator.go_to_pickup_bay(2)
+grabber.pick()
+navigator.go_to_rack(2)
+navigator.approach_rack()
+grabber.drop()
+navigator.exit_rack()
+navigator.return_to_start_line()
+
+# === Bay 3 -> Rack 3 ===
+navigator.go_to_pickup_bay(3)
+grabber.pick()
+navigator.go_to_rack(3)
+navigator.approach_rack()
+grabber.drop()
+navigator.exit_rack()
+navigator.return_to_start_line()
+
+# === Bay 4 -> Rack 4 ===
+navigator.go_to_pickup_bay(4)
+grabber.pick()
+navigator.go_to_rack(4)
+navigator.approach_rack()
+grabber.drop()
+navigator.exit_rack()
+navigator.return_to_start_line()
+
+# Return to start box
 navigator.go_to_pickup_bay(0)
 navigator.enter_start_box()
-
-# line following test:
-# navigator.line_follow_until(1, 1)
-# motors.turn_right(90)
-# navigator.skip_junction(0, 1)
-# navigator.line_follow_until(1, 1)
-# motors.turn_left(90)
-# navigator.skip_junction(1, 1)
-# navigator.line_follow_until(1, 0)
-# motors.turn_left(90)
-# navigator.skip_junction(1, 0)
-# navigator.line_follow_until(1, 0)
-# motors.turn_left(90)
-# navigator.skip_junction(1, 1)
-# navigator.skip_junction(1, 0, 6)
-# navigator.line_follow_until(1, 0)
-# motors.turn_left(90)
-# navigator.skip_junction(0, 1)
-# navigator.line_follow_until(0, 1)
-# motors.turn_right(90)
-# motors.drive(BASE_SPEED, BASE_SPEED)
-# sleep_ms(int(600.0 / BASE_SPEED))
-# motors.stop()
