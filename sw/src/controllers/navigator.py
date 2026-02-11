@@ -224,19 +224,6 @@ class Navigator:
             self.skip_junction(1, 1)
             self.skip_junction(0, 1, 6)
 
-    def pick_up_box(self):
-        self.motors.drive(BASE_SPEED * 0.5, BASE_SPEED * 0.5)
-        sleep_ms(BAY_ENTER_DURATION)
-        self.motors.stop()
-        Grabber.pick()
-        self.motors.drive(BASE_SPEED * -0.5, BASE_SPEED * -0.5)
-        sleep_ms(BAY_ENTER_DURATION)
-        self.motors.stop()
-
-    def drop_box(self):
-        Grabber.drop()
-        Grabber.home()
-
 
         
         

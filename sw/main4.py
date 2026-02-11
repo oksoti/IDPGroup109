@@ -13,6 +13,7 @@ from src.drivers.button import Button
 from src.drivers.led import LED
 from src.controllers.navigator import Navigator
 from src.controllers.rack_controller import RackController
+from src.controllers.grabber import Grabber
 
 # Config
 import src.config as config
@@ -71,6 +72,12 @@ led_1.off()
 led_2.off()
 led_3.off()
 led_4.off()
+
+grabber = Grabber(
+tilt_servo=config.TILT_SERVO,
+jaw_servo=config.JAW_SERVO
+)
+grabber.home()
 
 navigator.leave_start_box()
 navigator.go_to_pickup_bay(1)
