@@ -26,4 +26,4 @@ class LEDPanel:
             led.off()
 
     def on(self, num):
-        self.leds[num + 1].on()
+        self.leds[num - 1].on()

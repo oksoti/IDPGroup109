@@ -11,7 +11,7 @@ class Servo:
         current_duty = int(1500 + (current_angle / 270) * 7000)  # 1500 for 0 degrees, 8500 for 270 degrees
         desired_duty = int(1500 + (desired_angle / 270) * 7000)  # 1500 for 0 degrees, 8500 for 270 degrees
         if (desired_angle > current_angle):  
-            for duty in range(current_duty,desired_duty,20):
+            for duty in range(current_duty,desired_duty,10):
                 
                 self.pwm.duty_u16(duty)
                 #print(f"Raw Value: {raw_value}, Voltage: {voltage:.2f}V")
@@ -19,10 +19,11 @@ class Servo:
                 sleep_ms(10)
 
         if (desired_angle < current_angle):   
-            for duty in range(current_duty,desired_duty,-20):
+            for duty in range(current_duty,desired_duty,-10):
                 self.pwm.duty_u16(duty)
                 #print(f"Raw Value: {raw_value}, Voltage: {voltage:.2f}V")
                 print(f"Processing position: {duty}")
                 sleep_ms(10)
 
         self.pwm.duty_u16(desired_duty)  # Set to the final desired position
+        sleep_ms(100)

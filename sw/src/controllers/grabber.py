@@ -8,12 +8,11 @@ class Grabber:
         self,
         tilt_servo,
         jaw_servo,
-        motors,
-        tilt_down=30,
-        tilt_up=110,
-        jaw_open_full=90,
-        jaw_open_part=40,
-        jaw_closed=10,
+        tilt_down=90,
+        tilt_up=120,
+        jaw_open_full=100,
+        jaw_open_part=50,
+        jaw_closed=40,
     ):
         self.tilt_servo = tilt_servo
         self.jaw_servo = jaw_servo
@@ -28,7 +27,6 @@ class Grabber:
         # Grabber tracks current angles because Servo.set_angle needs them
         self._tilt_angle = tilt_up
         self._jaw_angle = jaw_open_full
-        self.motors = motors
 
     def set_tilt(self, desired_angle):
         """Move tilt servo to desired_angle, updating internal current angle."""
@@ -81,15 +79,6 @@ class Grabber:
         self.open_part()
         sleep_ms(100)
         self.tilt_upwards()
-
-    def pick_up_box(self):
-        self.motors.drive(config.BASE_SPEED * 0.5, config.BASE_SPEED * 0.5)
-        sleep_ms(config.BAY_ENTER_DURATION)
-        self.motors.stop()
-        self.pick()
-        self.motors.drive(config.BASE_SPEED * -0.5, config.BASE_SPEED * -0.5)
-        sleep_ms(config.BAY_ENTER_DURATION)
-        self.motors.stop()
 
     def drop_box(self):
         self.drop()

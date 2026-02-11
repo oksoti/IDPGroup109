@@ -1,43 +1,23 @@
-from utime import sleep_ms
+from machine import I2C, Pin
+from libs.VL53L0X.VL53L0X import VL53L0X
 
 class DistanceSensor:
-    def __init__(self, sensor, threshold_mm=180, samples=7, sample_delay_ms=10,
-                 valid_min_mm=20, valid_max_mm=2000):
-        self.sensor = sensor
+    def __init__(self, id_, scl_pin, sda_pin, freq, threshold_mm=180, valid_min_mm=20):
+        i2c = I2C(id_, scl=Pin(scl_pin), sda=Pin(sda_pin), freq=freq)
+        self.sensor = VL53L0X(i2c)
         self.threshold_mm = threshold_mm
-        self.samples = samples
-        self.sample_delay_ms = sample_delay_ms
         self.valid_min_mm = valid_min_mm
-        self.valid_max_mm = valid_max_mm
-
-        if hasattr(self.sensor, "begin"):
-            while sensor.begin() != 0:
-                sleep_ms(100)
-            sensor.start_measurement(calib_m = sensor.eMODE_NO_CALIB, mode = sensor.eDISTANCE)
-        else:
-            sensor.set_Vcsel_pulse_period(sensor.vcsel_period_type[0], 18)
-            sensor.set_Vcsel_pulse_period(sensor.vcsel_period_type[1], 14)
-            sensor.start()
+        self.sensor.set_Vcsel_pulse_period(self.sensor.vcsel_period_type[0], 18)
+        self.sensor.set_Vcsel_pulse_period(self.sensor.vcsel_period_type[1], 14)
+        self.sensor.start()
 
     def read_distance_mm(self):
         # VL53L0X library: .read()
-        if hasattr(self.sensor, "read"):
-            for _ in range(10):
-                d = self.sensor.read()
-                if d is not None and self.valid_min_mm <= d <= self.valid_max_mm:
-                    return d
-            return None
-        # TMF8701 library: .get_distance_mm()
-        if hasattr(self.sensor, "get_distance_mm"):
-            while self.sensor.is_data_ready() == False:
-                sleep_ms(10)
-            for _ in range(10):
-                d = self.sensor.get_distance_mm()
-                if d is not None and self.valid_min_mm <= d <= self.valid_max_mm:
-                    return d
-                sleep_ms(10)
-            return None
-        raise RuntimeError("Sensor must provide read() or get_distance_mm()")
+        for _ in range(10):
+            d = self.sensor.read()
+            if d is not None and self.valid_min_mm <= d:
+                return d
+        return None
 
     def rack_occupied(self):
         d = self.read_distance_mm()
