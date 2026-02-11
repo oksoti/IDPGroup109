@@ -1,6 +1,5 @@
 from ..config import BASE_SPEED, REALIGN_SPEED, OUTSIDE_TURN_SPEED, INSIDE_TURN_SPEED, TURN_AROUND_SPEED, LEFT_TURN_DURATION, RIGHT_TURN_DURATION, TURN_AROUND_DURATION, BAY_ENTER_DURATION
 from utime import sleep_ms
-from .grabber import Grabber
 
 class Navigator:
     def __init__(self, motors, line_sensor):

@@ -1,6 +1,6 @@
 from utime import sleep_ms
 
-class BoxDetector:
+class DistanceSensor:
     def __init__(self, sensor, threshold_mm=180, samples=7, sample_delay_ms=10,
                  valid_min_mm=20, valid_max_mm=2000):
         self.sensor = sensor

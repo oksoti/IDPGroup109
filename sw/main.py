@@ -8,13 +8,14 @@ from libs.DFRobot_TMF8x01.DFRobot_TMF8x01 import DFRobot_TMF8701
 # Drivers
 from src.drivers.line_sensor import LineSensorArray
 from src.drivers.motor import Motor, MotorPair
-from src.drivers.box_detector import BoxDetector
+from sw.src.drivers.distance_sensor import DistanceSensor
 from src.drivers.button import Button
-from src.drivers.led import LED
+from src.drivers.led import LED, LEDPanel
 from src.controllers.navigator import Navigator
-from src.controllers.rack_controller import RackController
+from sw.src.controllers.box_detector import BoxDetector
 from src.controllers.grabber import Grabber
 from src.drivers.servo import Servo
+from src.drivers.resistance_measurer import ResistanceMeasurer
 
 # Config
 import src.config as config
@@ -32,14 +33,14 @@ i2c_right = I2C(config.I2C_ID_right, scl=Pin(config.I2C_SCL_PIN_right), sda=Pin(
 left_tof = VL53L0X(i2c_left)          # VL53 init
 right_tof = DFRobot_TMF8701(i2c_right) # TMF init
 
-left_detector = BoxDetector(
+left_sensor = DistanceSensor(
     left_tof,
     threshold_mm=config.BAY_OCCUPIED_THRESHOLD_MM_LEFT,
     samples=config.BOX_SAMPLES,
     sample_delay_ms=config.BOX_SAMPLE_DELAY_MS
 )
 
-right_detector = BoxDetector(
+right_sensor = DistanceSensor(
     right_tof,
     threshold_mm=config.BAY_OCCUPIED_THRESHOLD_MM_RIGHT,
     samples=config.BOX_SAMPLES,
@@ -48,7 +49,7 @@ right_detector = BoxDetector(
 
 print("Running. Press Ctrl+C to stop.")
 
-bay_controller = RackController(left_detector, right_detector)
+box_detector = BoxDetector(left_sensor, right_sensor)
 
 # did_turn = bay_controller.attempt_turn_into_bay("left")
 
@@ -65,31 +66,13 @@ led_2 = LED(config.LED_2_PIN)
 led_3 = LED(config.LED_3_PIN)
 led_4 = LED(config.LED_4_PIN)
 
+led_panel = LEDPanel([led_1, led_2, led_3, led_4])
+
+resistance_measurer = ResistanceMeasurer(config.ADC_PIN_NUMBER)
+
 # simple loop to test the box detection before starting the main routine (waiting for the button to be pressed)
 while not button.pressed():
-    if bay_controller.rack_occupied(1):
-        led_2.on()
-        led_3.off()
-    else:
-        led_3.on()
-        led_2.off()
-    if bay_controller.rack_occupied(2):
-        led_1.on()
-        led_4.off()
-    else:
-        led_4.on()
-        led_1.off()
-    sleep_ms(1000)
-
-led_1.on()
-led_2.on()
-led_3.on()
-led_4.on()
-sleep_ms(1000)
-led_1.off()
-led_2.off()
-led_3.off()
-led_4.off()
+    sleep_ms(10)
 
 # Home the grabber before starting
 grabber.home()
@@ -97,41 +80,44 @@ grabber.home()
 # Leave start box
 navigator.leave_start_box()
 
-# === Bay 1 -> Rack 1 ===
-navigator.go_to_pickup_bay(1)
-grabber.pick()
-navigator.go_to_rack(1)
-navigator.approach_rack()
-grabber.drop()
-navigator.exit_rack()
-navigator.return_to_start_line()
+for bay_number in range(1, 5):
+    led_panel.all_off()
+    
+    # Go to pickup bay
+    navigator.go_to_pickup_bay(bay_number)
 
-# === Bay 2 -> Rack 2 ===
-navigator.go_to_pickup_bay(2)
-grabber.pick()
-navigator.go_to_rack(2)
-navigator.approach_rack()
-grabber.drop()
-navigator.exit_rack()
-navigator.return_to_start_line()
+    # Pick up box
+    grabber.pick()
 
-# === Bay 3 -> Rack 3 ===
-navigator.go_to_pickup_bay(3)
-grabber.pick()
-navigator.go_to_rack(3)
-navigator.approach_rack()
-grabber.drop()
-navigator.exit_rack()
-navigator.return_to_start_line()
+    rack_number = resistance_measurer.measure_resistance()
 
-# === Bay 4 -> Rack 4 ===
-navigator.go_to_pickup_bay(4)
-grabber.pick()
-navigator.go_to_rack(4)
-navigator.approach_rack()
-grabber.drop()
-navigator.exit_rack()
-navigator.return_to_start_line()
+    led_panel.on(rack_number)
+
+    # Go to rack
+    navigator.go_to_rack(rack_number)
+
+    # find an empty rack slot & place the box down
+    for i in range(6):
+        if rack_number == 1 or rack_number == 2:
+            navigator.line_follow_until(0, 1)
+        else:
+            navigator.line_follow_until(1, 0)
+        
+        if box_detector.rack_occupied(rack_number):
+            led_2.on()
+            if rack_number == 1 or rack_number == 2:
+                navigator.skip_junction(0, 1)
+            else:
+                navigator.skip_junction(1, 0)
+        else:
+            navigator.approach_rack()
+            grabber.tilt_downwards()
+            grabber.open_part()
+            navigator.exit_rack()
+            grabber.home()
+            break
+
+    navigator.return_to_start_line()
 
 # Return to start box
 navigator.go_to_pickup_bay(0)

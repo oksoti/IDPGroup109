@@ -1,6 +1,4 @@
-from utime import sleep_ms
-
-class RackController:
+class BoxDetector:
     def __init__(self, left_detector, right_detector):
         self.left_detector = left_detector     # VL53L0X side
         self.right_detector = right_detector   # TMF8701 side

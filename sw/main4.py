@@ -8,11 +8,11 @@ from libs.DFRobot_TMF8x01.DFRobot_TMF8x01 import DFRobot_TMF8701
 # Drivers
 from src.drivers.line_sensor import LineSensorArray
 from src.drivers.motor import Motor, MotorPair
-from src.drivers.box_detector import BoxDetector
+from sw.src.drivers.distance_sensor import DistanceSensor
 from src.drivers.button import Button
 from src.drivers.led import LED
 from src.controllers.navigator import Navigator
-from src.controllers.rack_controller import RackController
+from sw.src.controllers.box_detector import BoxDetector
 from src.controllers.grabber import Grabber
 
 # Config
@@ -31,14 +31,14 @@ i2c_right = I2C(config.I2C_ID_right, scl=Pin(config.I2C_SCL_PIN_right), sda=Pin(
 left_tof = VL53L0X(i2c_left)          # VL53 init
 right_tof = DFRobot_TMF8701(i2c_right) # TMF init
 
-left_detector = BoxDetector(
+left_detector = DistanceSensor(
     left_tof,
     threshold_mm=config.BAY_OCCUPIED_THRESHOLD_MM_LEFT,
     samples=config.BOX_SAMPLES,
     sample_delay_ms=config.BOX_SAMPLE_DELAY_MS
 )
 
-right_detector = BoxDetector(
+right_detector = DistanceSensor(
     right_tof,
     threshold_mm=config.BAY_OCCUPIED_THRESHOLD_MM_RIGHT,
     samples=config.BOX_SAMPLES,
@@ -47,7 +47,7 @@ right_detector = BoxDetector(
 
 print("Running. Press Ctrl+C to stop.")
 
-rack_controller = RackController(left_detector, right_detector)
+rack_controller = BoxDetector(left_detector, right_detector)
 
 # did_turn = bay_controller.attempt_turn_into_bay("left")
 
