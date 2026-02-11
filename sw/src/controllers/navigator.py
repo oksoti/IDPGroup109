@@ -1,5 +1,6 @@
-from ..config import BASE_SPEED, REALIGN_SPEED, OUTSIDE_TURN_SPEED, INSIDE_TURN_SPEED, TURN_AROUND_SPEED, LEFT_TURN_DURATION, RIGHT_TURN_DURATION, TURN_AROUND_DURATION
+from ..config import BASE_SPEED, REALIGN_SPEED, OUTSIDE_TURN_SPEED, INSIDE_TURN_SPEED, TURN_AROUND_SPEED, LEFT_TURN_DURATION, RIGHT_TURN_DURATION, TURN_AROUND_DURATION, BAY_ENTER_DURATION
 from utime import sleep_ms
+from .grabber import Grabber
 
 class Navigator:
     def __init__(self, motors, line_sensor):
@@ -222,4 +223,21 @@ class Navigator:
             self.turn_right()
             self.skip_junction(1, 1)
             self.skip_junction(0, 1, 6)
+
+    def pick_up_box(self):
+        self.motors.drive(BASE_SPEED * 0.5, BASE_SPEED * 0.5)
+        sleep_ms(BAY_ENTER_DURATION)
+        self.motors.stop()
+        Grabber.pick()
+        self.motors.drive(BASE_SPEED * -0.5, BASE_SPEED * -0.5)
+        sleep_ms(BAY_ENTER_DURATION)
+        self.motors.stop()
+
+    def drop_box(self):
+        Grabber.drop()
+        Grabber.home()
+
+
+        
+        
 
