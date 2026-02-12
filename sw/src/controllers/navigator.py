@@ -62,10 +62,10 @@ class Navigator:
             sleep_ms(10)
         self.motors.stop()
 
-    def skip_junction(self, ol_target, or_target, quantity=1):
+    def skip_junction(self, ol_target, or_target, quantity=1, speed=config.BASE_SPEED):
         for _ in range(quantity):
-            self.line_follow_until(ol_target, or_target)
-            self.line_follow_for_duration(int(200.0 / config.BASE_SPEED))
+            self.line_follow_until(ol_target, or_target, speed)
+            self.line_follow_until(0, 0, speed)
 
     def leave_start_box(self):
         self.motors.drive(config.BASE_SPEED, config.BASE_SPEED)
@@ -87,9 +87,10 @@ class Navigator:
             self.line_follow_until(1, 1)
             if bay_number < 3:
                 self.turn_left()
-                self.line_follow_until(1, 0)
                 if bay_number == 1:
                     self.line_follow_until(1, 1)
+                else:
+                    self.line_follow_until(1, 0)
                 self.turn_left()
             else:
                 self.turn_right()
@@ -146,7 +147,7 @@ class Navigator:
 
     def exit_rack(self):
         self.line_follow_until(1, 1, config.RACK_APPROACH_DURATION, True)
-        if self.rack_number == 1 or self.rack_number == 3:
+        if self.rack_number == 1 or self.rack_number == 2:
             self.turn_left()
         else:
             self.turn_right()
@@ -176,7 +177,7 @@ class Navigator:
                 self.skip_junction(0, 1)
             
             if rack_number > 1:
-                self.line_follow_until(1, 1)
+                self.skip_junction(1, 1)
                 self.line_follow_until(0, 1)
                 self.turn_right()
                 self.line_follow_until(0, 1)
@@ -195,7 +196,6 @@ class Navigator:
 
     def return_to_start_line(self):
         if self.rack_number == 2 or self.rack_number == 3:
-            self.turn_around(self.rack_number == 3)
             if self.rack_number == 2:
                 self.line_follow_until(1, 0)
                 self.turn_left()
@@ -209,7 +209,7 @@ class Navigator:
             self.line_follow_until(1, 1)
             self.turn_right()
         else:
-            self.line_follow_until(1, 1)
+            self.skip_junction(1, 1)
 
         if self.rack_number == 1:
             self.line_follow_until(0, 1)

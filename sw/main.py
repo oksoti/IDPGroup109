@@ -75,7 +75,7 @@ navigator.leave_start_box()
 
 # navigator.return_to_start_line()
 
-for bay_number in range(1, 2):
+for bay_number in range(1, 5):
     led_panel.all_off()
 
     # Go to pickup bay
@@ -103,10 +103,13 @@ for bay_number in range(1, 2):
             navigator.line_follow_until(1, 0, config.BOX_DETECTING_SPEED)
         
         if box_detector.rack_occupied(rack_number):
-            if rack_number == 1 or rack_number == 3:
-                navigator.skip_junction(0, 1)
-            else:
-                navigator.skip_junction(1, 0)
+            if i < 5:
+                if rack_number == 1 or rack_number == 3:
+                    navigator.skip_junction(0, 1, 1, config.BOX_DETECTING_SPEED)
+                else:
+                    navigator.skip_junction(1, 0, 1, config.BOX_DETECTING_SPEED)
+            elif rack_number == 2 or rack_number == 3:
+                navigator.turn_around(rack_number == 3)
         else:
             navigator.approach_rack()
             grabber.open_part()
