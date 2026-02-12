@@ -1,3 +1,4 @@
+#rachelwald-gooner
 import qrcode # pip install "qrcode[pil]"
 from fpdf import FPDF, Align # pip install fpdf2
 
