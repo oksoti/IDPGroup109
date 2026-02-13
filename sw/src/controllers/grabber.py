@@ -8,11 +8,11 @@ class Grabber:
         self,
         tilt_servo,
         jaw_servo,
-        tilt_down=90,
-        tilt_up=120,
-        jaw_open_full=100,
-        jaw_open_part=50,
-        jaw_closed=40,
+        tilt_down=80,
+        tilt_up=110,
+        jaw_open_full=120,
+        jaw_open_part=30,
+        jaw_closed=20,
     ):
         self.tilt_servo = tilt_servo
         self.jaw_servo = jaw_servo

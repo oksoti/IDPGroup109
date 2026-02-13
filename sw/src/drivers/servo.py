@@ -14,15 +14,11 @@ class Servo:
             for duty in range(current_duty,desired_duty,10):
                 
                 self.pwm.duty_u16(duty)
-                #print(f"Raw Value: {raw_value}, Voltage: {voltage:.2f}V")
-                print(f"Processing position: {duty}")
                 sleep_ms(10)
 
         if (desired_angle < current_angle):   
             for duty in range(current_duty,desired_duty,-10):
                 self.pwm.duty_u16(duty)
-                #print(f"Raw Value: {raw_value}, Voltage: {voltage:.2f}V")
-                print(f"Processing position: {duty}")
                 sleep_ms(10)
 
         self.pwm.duty_u16(desired_duty)  # Set to the final desired position
