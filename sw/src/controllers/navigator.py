@@ -24,6 +24,21 @@ class Navigator:
         sleep_ms(config.TURN_AROUND_DURATION)
         self.motors.stop()
 
+    def wiggle(self):
+        for i in range (10):
+            self.motors.drive(config.WIGGLE_SPEED, -config.WIGGLE_SPEED)
+            sleep_ms(config.WIGGLE_DURATION)
+            ol, ml, mr, or_ = self.line_sensor.read_named()
+            if ml == 1 or mr == 1:
+                break
+        for i in range (20):
+            self.motors.drive(-config.WIGGLE_SPEED, config.WIGGLE_SPEED)
+            sleep_ms(config.WIGGLE_DURATION)
+            ol, ml, mr, or_ = self.line_sensor.read_named()
+            if ml == 1 or mr == 1:
+                break
+        self.motors.stop()
+
     def line_follow_until(self, ol_target, or_target, speed=config.BASE_SPEED, reverse=False):
         direction = -1 if reverse else 1
         while True:
@@ -40,7 +55,7 @@ class Navigator:
             elif ml == 0 and mr == 1:
                 self.motors.drive(speed * direction, speed * config.REALIGN_MULTIPLIER * direction)
             else:
-                self.motors.stop()
+                self.motors.wiggle()
 
             sleep_ms(10)
         self.motors.stop()
@@ -57,7 +72,7 @@ class Navigator:
             elif ml == 0 and mr == 1:
                 self.motors.drive(speed * direction, speed *config.REALIGN_MULTIPLIER * direction)
             else:
-                self.motors.stop()
+                self.motors.wiggle()
 
             sleep_ms(10)
         self.motors.stop()
