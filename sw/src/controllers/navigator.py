@@ -65,14 +65,12 @@ class Navigator:
         for _ in range(duration // 10):
             ol, ml, mr, or_ = self.line_sensor.read_named()
 
-            if ml == 1 and mr == 1:
+            if ml == 1 and mr == 0:
                 self.motors.drive(speed * direction, speed * direction)
-            elif ml == 1 and mr == 0:
+            elif ml == 0 and mr == 0:
                 self.motors.drive(speed * config.REALIGN_MULTIPLIER * direction, speed * direction)
-            elif ml == 0 and mr == 1:
-                self.motors.drive(speed * direction, speed *config.REALIGN_MULTIPLIER * direction)
             else:
-                self.wiggle()
+                self.motors.drive(speed * direction, speed * config.REALIGN_MULTIPLIER * direction)
 
             sleep_ms(10)
         self.motors.stop()
@@ -143,9 +141,10 @@ class Navigator:
                     self.skip_junction(1, 0)
                     self.line_follow_until(1, 0)
                 self.turn_left()
-        if bay_number != 0:       
-            self.line_follow_for_duration(config.BAY_ENTER_DURATION, config.BAY_ENTER_SPEED)
         self.bay_number = bay_number
+
+    def approach_bay(self):
+        self.line_follow_for_duration(config.BAY_ENTER_DURATION, config.BAY_ENTER_SPEED)
 
     def drive_for_duration(self, duration, speed=config.BASE_SPEED, reverse=False):
         direction = -1 if reverse else 1

@@ -82,9 +82,15 @@ for bay_number in range(1, 5):
     navigator.go_to_pickup_bay(bay_number)
 
     # Pick up box
-    grabber.pick()
+    grabber.open_full()
+    grabber.tilt_downwards()
 
-    sleep_ms(500)
+    navigator.approach_bay()
+
+    grabber.close()
+    grabber.tilt_upwards()
+
+    sleep_ms(1000)
     
     resistance_number = resistance_measurer.measure_resistance()
 

@@ -9,10 +9,12 @@ class Grabber:
         tilt_servo,
         jaw_servo,
         tilt_down=80,
-        tilt_up=110,
-        jaw_open_full=120,
-        jaw_open_part=30,
-        jaw_closed=20,
+        tilt_up=115,
+        tilt_home=150,
+        jaw_open_full=70,
+        jaw_open_part=33,
+        jaw_closed=28,
+        jaw_home=25
     ):
         self.tilt_servo = tilt_servo
         self.jaw_servo = jaw_servo
@@ -20,13 +22,15 @@ class Grabber:
         # presets
         self.tilt_down = tilt_down
         self.tilt_up = tilt_up
+        self.tilt_home = tilt_home
         self.jaw_open_full = jaw_open_full
         self.jaw_open_part = jaw_open_part
         self.jaw_closed = jaw_closed
+        self.jaw_home = jaw_home
 
         # Grabber tracks current angles because Servo.set_angle needs them
-        self._tilt_angle = tilt_up
-        self._jaw_angle = jaw_open_full
+        self._tilt_angle = tilt_home
+        self._jaw_angle = jaw_home
 
     def set_tilt(self, desired_angle):
         """Move tilt servo to desired_angle, updating internal current angle."""
@@ -58,19 +62,15 @@ class Grabber:
 
     def home(self):
         # Safe default pose
-        self.tilt_upwards()
-        self.open_full()
+        self.set_tilt(self.tilt_home)
+        self.set_jaw(self.jaw_home)
 
     def pick(self):
         # Open -> lower -> close -> lift
         self.open_full()
-        sleep_ms(100)
         self.tilt_downwards()
-        sleep_ms(100)
         self.close()
-        sleep_ms(100)
         self.tilt_upwards()
-        sleep_ms(100)
 
     def drop(self):
         # Lower -> open -> lift
