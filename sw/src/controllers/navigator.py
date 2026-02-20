@@ -8,23 +8,23 @@ class Navigator:
         self.rack_number = 0 # which rack the robot is at (0 = start box, a lower, a upper, b lower, b upper)
         self.bay_number = 0  # which bay the robot is at (0 = start box, 1-4)
 
-    def turn_left(self):
+    def turn_left(self): # turn left
         self.motors.drive(config.INSIDE_TURN_SPEED, config.OUTSIDE_TURN_SPEED)
         sleep_ms(config.LEFT_TURN_DURATION)
         self.motors.stop()
 
-    def turn_right(self):
+    def turn_right(self): # turn right
         self.motors.drive(config.OUTSIDE_TURN_SPEED, config.INSIDE_TURN_SPEED)
         sleep_ms(config.RIGHT_TURN_DURATION)
         self.motors.stop()
 
-    def turn_around(self, clockwise=True):
+    def turn_around(self, clockwise=True): # turn around, in either direction
         direction = 1 if clockwise else -1
         self.motors.drive(config.TURN_AROUND_SPEED * direction, -config.TURN_AROUND_SPEED * direction)
         sleep_ms(config.TURN_AROUND_DURATION)
         self.motors.stop()
 
-    def wiggle(self):
+    def wiggle(self): # if we lose the line, wiggle until we find it again
         for i in range (int(config.WIGGLE_DURATION / 10)):
             self.motors.drive(config.WIGGLE_SPEED, -config.WIGGLE_SPEED)
             sleep_ms(10)
@@ -39,7 +39,7 @@ class Navigator:
                 break
         self.motors.stop()
 
-    def line_follow_until(self, ol_target, or_target, speed=config.BASE_SPEED, reverse=False):
+    def line_follow_until(self, ol_target, or_target, speed=config.BASE_SPEED, reverse=False): # line follow until a certain junction is reached (left turn, right turn, t-junction)
         direction = -1 if reverse else 1
         while True:
             ol, ml, mr, or_ = self.line_sensor.read_named()
@@ -60,27 +60,30 @@ class Navigator:
             sleep_ms(10)
         self.motors.stop()
 
-    def line_follow_for_duration(self, duration, speed=config.BASE_SPEED, reverse=False):
+    def line_follow_for_duration(self, duration, speed=config.BASE_SPEED, reverse=False): # line follow for a specified duration
         direction = -1 if reverse else 1
         for _ in range(duration // 10):
             ol, ml, mr, or_ = self.line_sensor.read_named()
 
-            if ml == 1 and mr == 0:
+            if ml == 1 and mr == 1:
                 self.motors.drive(speed * direction, speed * direction)
-            elif ml == 0 and mr == 0:
+            elif ml == 1 and mr == 0:
                 self.motors.drive(speed * config.REALIGN_MULTIPLIER * direction, speed * direction)
-            else:
+            elif ml == 0 and mr == 1:
                 self.motors.drive(speed * direction, speed * config.REALIGN_MULTIPLIER * direction)
+            else:
+                self.wiggle()
 
             sleep_ms(10)
         self.motors.stop()
 
-    def skip_junction(self, ol_target, or_target, quantity=1, speed=config.BASE_SPEED):
+    def skip_junction(self, ol_target, or_target, quantity=1, speed=config.BASE_SPEED): # move past a specified junction (left turn, right turn, t-junction)
         for _ in range(quantity):
             self.line_follow_until(ol_target, or_target, speed)
             self.line_follow_until(0, 0, speed)
+            self.line_follow_for_duration(int(100.0 / speed), speed)
 
-    def leave_start_box(self):
+    def leave_start_box(self): # leave the start box
         self.motors.drive(config.BASE_SPEED, config.BASE_SPEED)
         while True:
             ol, ml, mr, or_ = self.line_sensor.read_named()
@@ -90,12 +93,13 @@ class Navigator:
             sleep_ms(10)
         self.motors.stop()
 
-    def enter_start_box(self):
+    def enter_start_box(self): # re-enter the start box
         self.motors.drive(config.BASE_SPEED, config.BASE_SPEED)
         sleep_ms(int(800.0 / config.BASE_SPEED))
         self.motors.stop()
 
-    def go_to_pickup_bay(self, bay_number):
+    def go_to_pickup_bay(self, bay_number): # go to a pickup bay
+        # this function hard codes the path required to get to any pickup bay, using the stored information of which rack we last went to (or the start box if we haven't visited a rack yet)
         if self.rack_number == 0:
             self.line_follow_until(1, 1)
             if bay_number < 3:
@@ -141,32 +145,28 @@ class Navigator:
                     self.skip_junction(1, 0)
                     self.line_follow_until(1, 0)
                 self.turn_left()
-        self.bay_number = bay_number
 
-    def approach_bay(self):
+        self.bay_number = bay_number # store which pickup bay we have arrived at
+
+    def approach_bay(self): # approach a pickup bay
         self.line_follow_for_duration(config.BAY_ENTER_DURATION, config.BAY_ENTER_SPEED)
 
-    def drive_for_duration(self, duration, speed=config.BASE_SPEED, reverse=False):
-        direction = -1 if reverse else 1
-        self.motors.drive(speed * direction, speed * direction)
-        sleep_ms(duration)
-        self.motors.stop()
-
-    def approach_rack(self):
+    def approach_rack(self): # approach a rack
         if self.rack_number == 1 or self.rack_number == 3:
             self.turn_right()
         else:
             self.turn_left()
         self.line_follow_for_duration(config.RACK_APPROACH_DURATION, config.RACK_APPROACH_SPEED)
 
-    def exit_rack(self):
-        self.line_follow_until(1, 1, config.RACK_APPROACH_DURATION, True)
+    def exit_rack(self): # exit a rack
+        self.line_follow_until(1, 1, config.RACK_APPROACH_SPEED, True)
         if self.rack_number == 1 or self.rack_number == 2:
             self.turn_left()
         else:
             self.turn_right()
 
-    def go_to_rack(self, rack_number):
+    def go_to_rack(self, rack_number): # go to a specific rack
+        # this function hard codes the path required to get to any rack, using the stored information of which pickup bay we last visited
         self.turn_around(self.bay_number > 2)
         if self.bay_number == 2 or self.bay_number == 3:
             self.line_follow_until(1, 1)
@@ -206,9 +206,10 @@ class Navigator:
                     self.line_follow_until(1, 0)
                     self.turn_left()
 
-        self.rack_number = rack_number
+        self.rack_number = rack_number # store which rack we have arrived at
 
-    def return_to_start_line(self):
+    def return_to_start_line(self): # return to the start line
+        # this function hard codes the path required to get back to the start line, ready to go to another pickup bay, using the stored information of which rack we last visited
         if self.rack_number == 2 or self.rack_number == 3:
             if self.rack_number == 2:
                 self.line_follow_until(1, 0)

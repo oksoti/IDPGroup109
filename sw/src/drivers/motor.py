@@ -2,7 +2,7 @@ from machine import Pin, PWM
 from utime import sleep_ms
 
 
-class Motor:
+class Motor: # class to control one of the motors
     def __init__(self, dir_pin, pwm_pin, freq=1000, speed_mult=1.0):
         self.dir = Pin(dir_pin, Pin.OUT)
         self.pwm = PWM(Pin(pwm_pin))
@@ -23,7 +23,7 @@ class Motor:
         self.pwm.duty_u16(0)
 
 
-class MotorPair:
+class MotorPair: # class to control both motors
     def __init__(self, left, right):
         self.left = left
         self.right = right

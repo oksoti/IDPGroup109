@@ -12,7 +12,6 @@ class DistanceSensor:
         self.sensor.start()
 
     def read_distance_mm(self):
-        # VL53L0X library: .read()
         for _ in range(10):
             d = self.sensor.read()
             if d is not None and self.valid_min_mm <= d:

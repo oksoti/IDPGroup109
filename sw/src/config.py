@@ -1,65 +1,54 @@
-# config.py  (Pico filesystem root)
-
-# --- Line sensors (4 sensors, left -> right) ---
-# Update these to the GPIO pins your 4 line sensors are wired to (left->right order)
+# line sensors
 LINE_PINS = [18, 19, 20, 21]
 
-# --- Motors ---
-# Update these to match your motor driver wiring (DIR pin + PWM pin for each motor)
+# motors
 LEFT_DIR_PIN = 4
 LEFT_PWM_PIN = 5
 RIGHT_DIR_PIN = 7
 RIGHT_PWM_PIN = 6
 
-# If your motors spin the wrong way, flip one (or both) of these
-LEFT_INVERT_DIR = False
-RIGHT_INVERT_DIR = False
+START_BUTTON_PIN = 22 # button
 
-START_BUTTON_PIN = 22
+# LEDs
 LED_1_PIN = 12
 LED_2_PIN = 14
 LED_3_PIN = 16
 LED_4_PIN = 17
 
+# speed & duration configuration
 BASE_SPEED = 1.0
-REALIGN_MULTIPLIER = 0.2
+REALIGN_MULTIPLIER = 0.4
 OUTSIDE_TURN_SPEED = 1.0 * BASE_SPEED
 INSIDE_TURN_SPEED = -0.5 * OUTSIDE_TURN_SPEED
 TURN_AROUND_SPEED = 1.0 * BASE_SPEED
-BAY_ENTER_SPEED = 0.6 * BASE_SPEED
-RACK_APPROACH_SPEED = 0.6 * BASE_SPEED
+BAY_ENTER_SPEED = 0.7 * BASE_SPEED
+RACK_APPROACH_SPEED = 0.7 * BASE_SPEED
 BOX_DETECTING_SPEED = 0.8 * BASE_SPEED
-
 WIGGLE_SPEED = 0.6 * BASE_SPEED
 WIGGLE_DURATION = 250  # ms
+LEFT_TURN_DURATION = int(880.0 / OUTSIDE_TURN_SPEED)
+RIGHT_TURN_DURATION = int(840.0 / OUTSIDE_TURN_SPEED)
+TURN_AROUND_DURATION = int(1320.0 / TURN_AROUND_SPEED)
+BAY_ENTER_DURATION = int(920.0 / BAY_ENTER_SPEED)
+RACK_APPROACH_DURATION = int(840.0 / RACK_APPROACH_SPEED)
 
-LEFT_TURN_DURATION = int(900.0 / OUTSIDE_TURN_SPEED)
-RIGHT_TURN_DURATION = int(800.0 / OUTSIDE_TURN_SPEED)
-TURN_AROUND_DURATION = int(1350.0 / TURN_AROUND_SPEED)
+# distance threshold for detecting a box
+BAY_OCCUPIED_THRESHOLD_MM = 275
 
-# Loop timing
-LOOP_DELAY_MS = 10  # 10ms = 100 Hz loop
-
-# Box detection
-BAY_OCCUPIED_THRESHOLD_MM = 280
-BOX_SAMPLES = 7
-BOX_SAMPLE_DELAY_MS = 10
-
-BAY_ENTER_DURATION = int(850.0 / BAY_ENTER_SPEED)
-RACK_APPROACH_DURATION = int(450.0 / RACK_APPROACH_SPEED)
-
+# distance sensors
 I2C_ID_LEFT = 1
 I2C_SDA_PIN_LEFT = 10
 I2C_SCL_PIN_LEFT = 11
 I2C_FREQ_LEFT = 400000
-
 I2C_ID_RIGHT = 0
 I2C_SDA_PIN_RIGHT = 8
 I2C_SCL_PIN_RIGHT = 9
 I2C_FREQ_RIGHT = 400000
 
+# servos
 JAW_SERVO_PIN = 13
 TILT_SERVO_PIN = 15
 SERVO_FREQ = 50
 
+# ADC (resistance measurer)
 ADC_PIN_NUMBER = 26
